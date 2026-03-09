@@ -864,7 +864,11 @@
     <hr class="form-divider">
     <div class="step-label">Step 7</div>
     <div class="section-title">Accounting Policies to Include</div>
-    <p class="hint" style="margin-bottom:14px;">Tick only the policies applicable to this entity. Unticked policies will be hidden.</p>
+    <p class="hint" style="margin-bottom:10px;">Tick only the policies applicable to this entity. Unticked policies will not appear in the document.</p>
+    <div style="display:flex;gap:8px;margin-bottom:14px;">
+      <button type="button" onclick="selectAllPolicies(true)" style="font-size:11px;padding:4px 10px;border:1px solid var(--gold);background:#fffbf0;color:var(--ink);border-radius:5px;cursor:pointer;">&#10003; Select All</button>
+      <button type="button" onclick="selectAllPolicies(false)" style="font-size:11px;padding:4px 10px;border:1px solid var(--border);background:var(--cream);color:var(--ink-light);border-radius:5px;cursor:pointer;">&#10005; Clear All</button>
+    </div>
 
     <div id="policy-checklist"></div>
 
@@ -1128,6 +1132,29 @@ function togglePolicy(id) {
   item.classList.toggle('checked', cb.checked);
 }
 
+function selectAllPolicies(checked) {
+  accountingPolicies.forEach(p => {
+    const cb = document.getElementById(p.id);
+    if (cb) {
+      cb.checked = checked;
+      const item = document.getElementById('pi-' + p.id);
+      if (item) item.classList.toggle('checked', checked);
+    }
+    // Also toggle sub-items visibility
+    if (p.subItems && !p.isBio) {
+      p.subItems.forEach(s => {
+        const scb = document.getElementById(s.id);
+        if (scb) {
+          scb.checked = checked;
+          const rw = document.getElementById('rate-wrap-' + s.id);
+          if (rw) rw.style.display = checked ? 'flex' : 'none';
+        }
+      });
+    }
+  });
+  liveUpdate();
+}
+
 // ── AUTO-FILL PREVIOUS YEAR END ──
 function autoFillPrevYear() {
   const raw = document.getElementById('yearEnd').value.trim();
@@ -1294,6 +1321,7 @@ function updateEntityType() {
 
 addDirector();
 addDirector();
+buildPolicyChecklist();
 
 // Wire bank "Other" live input
 document.addEventListener('input', function(e) {
