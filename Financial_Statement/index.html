@@ -872,7 +872,7 @@
     <div class="step-label">Step 6</div>
     <div class="section-title">Specific Matters (Directors' Report)</div>
 
-    <div class="field-group">
+    <div class="field-group" id="share-capital-group">
       <label>Share Capital Changes</label>
       <div class="options-group">
         <label class="option-pill">
@@ -887,13 +887,13 @@
       </div>
     </div>
 
-    <div class="field-group">
-      <label>Dividends</label>
+    <div class="field-group" id="dividends-group">
+      <label id="dividends-label">Dividends</label>
       <div class="options-group">
-        <label class="option-pill">
+        <label class="option-pill" id="dividend-pill-none">
           <input type="radio" name="dividends" value="none" checked onchange="updateDividend()"> No dividend declared or paid
         </label>
-        <label class="option-pill">
+        <label class="option-pill" id="dividend-pill-declared">
           <input type="radio" name="dividends" value="declared" onchange="updateDividend()"> Dividend declared/paid
         </label>
       </div>
@@ -953,7 +953,7 @@
       </div>
     </div>
 
-    <div class="field-group">
+    <div class="field-group" id="parent-co-group">
       <label>Parent Company</label>
       <div class="options-group">
         <label class="option-pill">
@@ -1451,6 +1451,16 @@ function selectEntity(el, type) {
     const firstAllowed = document.querySelector(`input[name="reportType"][value="${allowed[0]}"]`);
     if (firstAllowed) firstAllowed.checked = true;
   }
+  // Show/hide CC-specific form sections
+  const isCC = (type === 'cc');
+  document.getElementById('share-capital-group').style.display = isCC ? 'none' : '';
+  document.getElementById('parent-co-group').style.display = isCC ? 'none' : '';
+  document.getElementById('parent-group').style.display = isCC ? 'none' : '';
+  // Update dividend labels for CC (capital distribution)
+  document.getElementById('dividends-label').textContent = isCC ? 'Capital Distribution' : 'Dividends';
+  document.getElementById('dividend-pill-none').querySelector('input').nextSibling.textContent = isCC ? ' No capital distribution declared or paid' : ' No dividend declared or paid';
+  document.getElementById('dividend-pill-declared').querySelector('input').nextSibling.textContent = isCC ? ' Capital distribution declared/paid' : ' Dividend declared/paid';
+
   onReportTypeChange();
 
   liveUpdate();
@@ -1734,16 +1744,25 @@ function generateDoc() {
     ? { isAre: 'is', hasHave: 'has', theirIts: 'their', directorS: pluralTerm }
     : { isAre: 'are', hasHave: 'have', theirIts: 'their', directorS: pluralTerm };
 
-  // Share capital sentence
-  let shareCapitalSentence = '';
-  if (shareCapital === 'nochange') shareCapitalSentence = `There were no changes in the authorised or issued share capital of the company during the year under review.`;
-  else if (shareCapital === 'issued') shareCapitalSentence = `Shares and share capital were issued since the company was incorporated during the year under review.`;
-  else shareCapitalSentence = `Shares were authorised and issued for no consideration to the company during the year under review.`;
+  const entityType = currentEntityType || 'company';
 
-  // Dividend sentence
+  // Share capital sentence (not applicable for CC)
+  let shareCapitalSentence = '';
+  if (entityType !== 'cc') {
+    if (shareCapital === 'nochange') shareCapitalSentence = `There were no changes in the authorised or issued share capital of the company during the year under review.`;
+    else if (shareCapital === 'issued') shareCapitalSentence = `Shares and share capital were issued since the company was incorporated during the year under review.`;
+    else shareCapitalSentence = `Shares were authorised and issued for no consideration to the company during the year under review.`;
+  }
+
+  // Dividend sentence (CC uses "capital distribution")
   let dividendSentence = '';
-  if (dividends === 'none') dividendSentence = `No dividend was declared or paid during the year.`;
-  else dividendSentence = `A dividend of R&nbsp;${dividendAmount} was declared/paid during the year.`;
+  if (entityType === 'cc') {
+    if (dividends === 'none') dividendSentence = `No capital distribution was declared or paid during the year.`;
+    else dividendSentence = `A capital distribution of R&nbsp;${dividendAmount} was declared/paid during the year.`;
+  } else {
+    if (dividends === 'none') dividendSentence = `No dividend was declared or paid during the year.`;
+    else dividendSentence = `A dividend of R&nbsp;${dividendAmount} was declared/paid during the year.`;
+  }
 
   // Fixed assets sentence
   let fixedAssetsSentence = '';
@@ -1753,10 +1772,12 @@ function generateDoc() {
   // Outlook sentence
   const outlookText = outlook === 'continue' ? 'continue to be profitable' : 'be profitable in future';
 
-  // Parent sentence
+  // Parent sentence (not applicable for CC)
   let parentSentence = '';
-  if (parentCo === 'none') parentSentence = `The company has no parent company in or outside the Republic.`;
-  else parentSentence = `The company's parent company is ${parentName}.`;
+  if (entityType !== 'cc') {
+    if (parentCo === 'none') parentSentence = `The company has no parent company in or outside the Republic.`;
+    else parentSentence = `The company's parent company is ${parentName}.`;
+  }
 
   // Report section heading numbers (cover = 0, then 1–4, policies from 5)
   const pg1 = 1, pg2 = 2, pg3 = 3, pg4 = 4;
@@ -1955,7 +1976,8 @@ function generateDoc() {
     <div class="page-number">${pg3}</div>
   </div>`;
 
-  // ── PAGE 4: DIRECTORS' REPORT ──
+  // ── PAGE 4: DIRECTORS' / MEMBERS' REPORT ──
+  const entityLabel = entityType === 'cc' ? 'close corporation' : 'company';
   const page4 = `
   <div class="doc-page">
     <div class="page-header">
@@ -1965,18 +1987,18 @@ function generateDoc() {
     <h2>${pluralTerm}' Report</h2>
     <p>${bodyTerm} ${dirCount === 1 ? 'has' : 'have'} pleasure in presenting ${pronoun} report for the year ended ${yearEnd}.</p>
     <p class="underline-heading">Business Activities and General Review of Operations</p>
-    <p>The main business of the company is ${nature} and income of the company is generated mainly from ${income}.</p>
+    <p>The main business of the ${entityLabel} is ${nature} and income of the ${entityLabel} is generated mainly from ${income}.</p>
     <p>No material fact or circumstance has occurred since the financial position and the date of this report.</p>
     <p class="underline-heading">Specific Matters</p>
-    <p>No major change in the nature of the company's business took place during the accounting period.</p>
-    <p>${shareCapitalSentence}</p>
+    <p>No major change in the nature of the ${entityLabel}'s business took place during the accounting period.</p>
+    ${shareCapitalSentence ? `<p>${shareCapitalSentence}</p>` : ''}
     <p>${dividendSentence}</p>
     <p>${fixedAssetsSentence}</p>
-    <p>The company realised a ${plType} after tax of R&nbsp;${profitLoss} for the year ended ${yearEnd} (${prevYearEnd} — ${prevPlType} of R&nbsp;${prevProfitLoss}). ${bodyTerm} expect that the company will ${outlookText}. Accordingly the annual financial statements of the company are prepared on the basis of accounting policies applicable to a going concern.</p>
-    <p>The ${pluralTerm.toLowerCase()} of the company ${dirSingularPlural.isAre}: ${dirList}</p>
+    <p>The ${entityLabel} realised a ${plType} after tax of R&nbsp;${profitLoss} for the year ended ${yearEnd} (${prevYearEnd} — ${prevPlType} of R&nbsp;${prevProfitLoss}). ${bodyTerm} expect that the ${entityLabel} will ${outlookText}. Accordingly the annual financial statements of the ${entityLabel} are prepared on the basis of accounting policies applicable to a going concern.</p>
+    <p>The ${pluralTerm.toLowerCase()} of the ${entityLabel} ${dirSingularPlural.isAre}: ${dirList}</p>
     <p>The postal address is: ${postal}</p>
     <p>The registered address is: ${regAddr}</p>
-    <p>${parentSentence}</p>
+    ${parentSentence ? `<p>${parentSentence}</p>` : ''}
     <p>The financial statements were approved and signed by the ${pluralTerm.toLowerCase()}.</p>
     <p class="underline-heading">${pluralTerm}:</p>
     <div class="signature-block">
@@ -2233,7 +2255,6 @@ function generateDoc() {
 
   // ── CONDITIONAL PAGE ASSEMBLY ──
   const reportType = getRadio('reportType');
-  const entityType = currentEntityType || 'company';
   let assembledPages = '';
 
   if (entityType === 'trust') {
