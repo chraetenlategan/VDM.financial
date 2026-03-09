@@ -386,6 +386,50 @@
 
   .highlighted { background: #fffbe6; }
 
+  /* ── ENTITY TYPE CARDS ── */
+  .entity-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .entity-card {
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+    background: var(--cream);
+  }
+  .entity-card:hover {
+    border-color: var(--gold);
+    background: #fffbf0;
+  }
+  .entity-card.selected {
+    border-color: var(--gold);
+    background: #fffbf0;
+    box-shadow: 0 0 0 2px rgba(201,168,76,0.25);
+  }
+  .entity-card .ec-icon {
+    font-size: 18px;
+    margin-bottom: 4px;
+    display: block;
+  }
+  .entity-card .ec-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink);
+    display: block;
+    line-height: 1.3;
+  }
+  .entity-card .ec-sub {
+    font-size: 10px;
+    color: var(--ink-light);
+    margin-top: 2px;
+    display: block;
+  }
+
   /* ── POLICY CHECKLIST ── */
   .policy-item {
     border: 1.5px solid var(--border);
@@ -536,15 +580,62 @@
   <div class="form-panel">
 
     <div class="step-label">Step 1</div>
-    <div class="section-title">Entity Details</div>
+    <div class="section-title">Entity Type</div>
+
+    <div class="entity-grid">
+      <div class="entity-card selected" id="ec-company" onclick="selectEntity(this,'company')">
+        <span class="ec-icon">🏢</span>
+        <span class="ec-label">Company</span>
+        <span class="ec-sub">(Pty) Ltd — Directors</span>
+      </div>
+      <div class="entity-card" id="ec-cc" onclick="selectEntity(this,'cc')">
+        <span class="ec-icon">🤝</span>
+        <span class="ec-label">Close Corporation</span>
+        <span class="ec-sub">CC — Members</span>
+      </div>
+      <div class="entity-card" id="ec-npo" onclick="selectEntity(this,'npo')">
+        <span class="ec-icon">🌱</span>
+        <span class="ec-label">NPO</span>
+        <span class="ec-sub">Non-Profit Organisation</span>
+      </div>
+      <div class="entity-card" id="ec-trust" onclick="selectEntity(this,'trust')">
+        <span class="ec-icon">⚖️</span>
+        <span class="ec-label">Trust</span>
+        <span class="ec-sub">Trustees</span>
+      </div>
+      <div class="entity-card" id="ec-church" onclick="selectEntity(this,'church')">
+        <span class="ec-icon">⛪</span>
+        <span class="ec-label">Church</span>
+        <span class="ec-sub">Church Council</span>
+      </div>
+      <div class="entity-card" id="ec-school" onclick="selectEntity(this,'school')">
+        <span class="ec-icon">🏫</span>
+        <span class="ec-label">School</span>
+        <span class="ec-sub">Governing Body</span>
+      </div>
+      <div class="entity-card" id="ec-club" onclick="selectEntity(this,'club')">
+        <span class="ec-icon">🏅</span>
+        <span class="ec-label">Club</span>
+        <span class="ec-sub">Committee Members</span>
+      </div>
+      <div class="entity-card" id="ec-bc" onclick="selectEntity(this,'bc')">
+        <span class="ec-icon">🏗️</span>
+        <span class="ec-label">Body Corporate</span>
+        <span class="ec-sub">Trustees</span>
+      </div>
+    </div>
+
+    <hr class="form-divider">
+    <div class="step-label">Step 2</div>
+    <div class="section-title">General Information</div>
 
     <div class="field-group">
-      <label>Company Name (as it appears on documents)</label>
+      <label id="label-entityName">Company Name (as it appears on documents)</label>
       <input type="text" id="companyName" placeholder="e.g. Aruba 33 (Proprietary) Limited" oninput="liveUpdate()">
     </div>
 
     <div class="field-group">
-      <label>Registration Number</label>
+      <label id="label-regNumber">Registration Number</label>
       <input type="text" id="regNumber" placeholder="e.g. 2002/002880/07" oninput="liveUpdate()">
     </div>
 
@@ -569,23 +660,8 @@
     </div>
 
     <hr class="form-divider">
-    <div class="step-label">Step 2</div>
-    <div class="section-title">Entity &amp; Report Type</div>
-
-    <div class="field-group">
-      <label>Entity Type</label>
-      <div class="options-group">
-        <label class="option-pill">
-          <input type="radio" name="entityType" value="company" checked onchange="updateEntityType()"> Company (Pty) Ltd — Directors
-        </label>
-        <label class="option-pill">
-          <input type="radio" name="entityType" value="cc" onchange="updateEntityType()"> Close Corporation (CC) — Members
-        </label>
-        <label class="option-pill">
-          <input type="radio" name="entityType" value="trust" onchange="updateEntityType()"> Trust — Trustees
-        </label>
-      </div>
-    </div>
+    <div class="step-label">Step 3</div>
+    <div class="section-title">Report Type</div>
 
     <div class="field-group">
       <label>Report Type</label>
@@ -604,14 +680,14 @@
     </div>
 
     <hr class="form-divider">
-    <div class="step-label">Step 3</div>
+    <div class="step-label">Step 4</div>
     <div class="section-title" id="directors-section-title">Directors</div>
 
     <div id="directors-list"></div>
     <button class="btn-add" onclick="addDirector()">+ Add Director / Member / Trustee</button>
 
     <hr class="form-divider">
-    <div class="step-label">Step 4</div>
+    <div class="step-label">Step 5</div>
     <div class="section-title">Addresses &amp; Dates</div>
 
     <div class="field-group">
@@ -675,7 +751,7 @@
     </div>
 
     <hr class="form-divider">
-    <div class="step-label">Step 5</div>
+    <div class="step-label">Step 6</div>
     <div class="section-title">Specific Matters (Directors' Report)</div>
 
     <div class="field-group">
@@ -786,7 +862,7 @@
     </div>
 
     <hr class="form-divider">
-    <div class="step-label">Step 6</div>
+    <div class="step-label">Step 7</div>
     <div class="section-title">Accounting Policies to Include</div>
     <p class="hint" style="margin-bottom:14px;">Tick only the policies applicable to this entity. Unticked policies will be hidden.</p>
 
@@ -1093,8 +1169,128 @@ function updateBank() {
   liveUpdate();
 }
 
-// Init checklist on load
-buildPolicyChecklist();
+// ── ENTITY CONFIG ──
+const ENTITY_CONFIG = {
+  company: {
+    nameLabel:    'Company Name (as it appears on documents)',
+    regLabel:     'Registration Number',
+    namePlaceholder: 'e.g. Aruba 33 (Proprietary) Limited',
+    regPlaceholder:  'e.g. 2002/002880/07',
+    bodyTitle:    'Directors',
+    pluralTerm:   'Directors',
+    singularTerm: 'Director',
+    reportTo:     'Shareholders',
+    addBtnLabel:  '+ Add Director'
+  },
+  cc: {
+    nameLabel:    'CC Name (as it appears on documents)',
+    regLabel:     'CK Number',
+    namePlaceholder: 'e.g. Aruba Trading 99 CC',
+    regPlaceholder:  'e.g. CK1999/012345/23',
+    bodyTitle:    'Members',
+    pluralTerm:   'Members',
+    singularTerm: 'Member',
+    reportTo:     'Members',
+    addBtnLabel:  '+ Add Member'
+  },
+  npo: {
+    nameLabel:    'Organisation Name (as it appears on documents)',
+    regLabel:     'NPO Number',
+    namePlaceholder: 'e.g. Helping Hands NPO',
+    regPlaceholder:  'e.g. 123-456 NPO',
+    bodyTitle:    'Directors',
+    pluralTerm:   'Directors',
+    singularTerm: 'Director',
+    reportTo:     'Members',
+    addBtnLabel:  '+ Add Director'
+  },
+  trust: {
+    nameLabel:    'Trust Name (as it appears on documents)',
+    regLabel:     'Trust Number',
+    namePlaceholder: 'e.g. The Smith Family Trust',
+    regPlaceholder:  'e.g. IT1234/2010',
+    bodyTitle:    'Trustees',
+    pluralTerm:   'Trustees',
+    singularTerm: 'Trustee',
+    reportTo:     'Beneficiaries',
+    addBtnLabel:  '+ Add Trustee'
+  },
+  church: {
+    nameLabel:    'Church Name (as it appears on documents)',
+    regLabel:     'Registration Number',
+    namePlaceholder: 'e.g. Grace Community Church',
+    regPlaceholder:  'e.g. 2005/008765/08',
+    bodyTitle:    'Church Council Members',
+    pluralTerm:   'Church Council Members',
+    singularTerm: 'Member',
+    reportTo:     'Members',
+    addBtnLabel:  '+ Add Council Member'
+  },
+  school: {
+    nameLabel:    'School Name (as it appears on documents)',
+    regLabel:     'EMIS Number',
+    namePlaceholder: 'e.g. Standerton Primary School',
+    regPlaceholder:  'e.g. 700112345',
+    bodyTitle:    'School Governing Body Members',
+    pluralTerm:   'School Governing Body Members',
+    singularTerm: 'Member',
+    reportTo:     'Parents and Community',
+    addBtnLabel:  '+ Add SGB Member'
+  },
+  club: {
+    nameLabel:    'Club Name (as it appears on documents)',
+    regLabel:     'Registration Number',
+    namePlaceholder: 'e.g. Standerton Sports Club',
+    regPlaceholder:  'e.g. 1985/003456/08',
+    bodyTitle:    'Committee Members',
+    pluralTerm:   'Committee Members',
+    singularTerm: 'Member',
+    reportTo:     'Members',
+    addBtnLabel:  '+ Add Committee Member'
+  },
+  bc: {
+    nameLabel:    'Body Corporate Name (as it appears on documents)',
+    regLabel:     'Scheme Number',
+    namePlaceholder: 'e.g. Sectional Title Scheme No. 123',
+    regPlaceholder:  'e.g. SS123/2005',
+    bodyTitle:    'Trustees',
+    pluralTerm:   'Trustees',
+    singularTerm: 'Trustee',
+    reportTo:     'Owners',
+    addBtnLabel:  '+ Add Trustee'
+  }
+};
+
+let currentEntityType = 'company';
+
+function selectEntity(el, type) {
+  // Deselect all cards
+  document.querySelectorAll('.entity-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  currentEntityType = type;
+
+  const cfg = ENTITY_CONFIG[type];
+
+  // Update labels and placeholders
+  document.getElementById('label-entityName').textContent = cfg.nameLabel;
+  document.getElementById('companyName').placeholder = cfg.namePlaceholder;
+  document.getElementById('label-regNumber').textContent = cfg.regLabel;
+  document.getElementById('regNumber').placeholder = cfg.regPlaceholder;
+
+  // Update governing body section title
+  document.getElementById('directors-section-title').textContent = cfg.bodyTitle;
+
+  // Update add button label
+  const addBtn = document.querySelector('.btn-add');
+  if (addBtn) addBtn.textContent = cfg.addBtnLabel;
+
+  liveUpdate();
+}
+
+function updateEntityType() {
+  // Legacy — kept for compatibility, delegates to selectEntity state
+  liveUpdate();
+}
 
 addDirector();
 addDirector();
@@ -1122,10 +1318,27 @@ function formatNumber(val) {
 }
 
 function getEntityTerms() {
-  const type = getRadio('entityType');
-  if (type === 'cc') return { plural: 'Members', singular: 'Member', pronoun: 'their', body: 'The members', report_to: 'Members', act: 'Close Corporations Act 69 of 1984', role: 'member' };
-  if (type === 'trust') return { plural: 'Trustees', singular: 'Trustee', pronoun: 'their', body: 'The trustees', report_to: 'Trustees', act: 'Trust Property Control Act 57 of 1988', role: 'trustee' };
-  return { plural: 'Directors', singular: 'Director', pronoun: 'their', body: 'The directors', report_to: 'Shareholders', act: 'Companies Act 71 of 2008', role: 'director' };
+  const type = currentEntityType || 'company';
+  const cfg = ENTITY_CONFIG[type] || ENTITY_CONFIG.company;
+  const acts = {
+    company: 'Companies Act 71 of 2008',
+    cc:      'Close Corporations Act 69 of 1984',
+    npo:     'Non-Profit Organisations Act 71 of 1997',
+    trust:   'Trust Property Control Act 57 of 1988',
+    church:  '',
+    school:  'South African Schools Act 84 of 1996',
+    club:    '',
+    bc:      'Sectional Titles Schemes Management Act 8 of 2011'
+  };
+  return {
+    plural:    cfg.pluralTerm,
+    singular:  cfg.singularTerm,
+    pronoun:   'their',
+    body:      'The ' + cfg.pluralTerm.toLowerCase(),
+    report_to: cfg.reportTo,
+    act:       acts[type] || 'Companies Act 71 of 2008',
+    role:      cfg.singularTerm.toLowerCase()
+  };
 }
 
 // Returns singular or plural terms depending on director count
