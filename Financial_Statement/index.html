@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VDM — Financial Statement Policy Generator</title>
-<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --ink: #1a1a2e;
@@ -21,7 +21,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Poppins', sans-serif;
     background: var(--cream);
     color: var(--ink);
     min-height: 100vh;
@@ -98,7 +98,7 @@
     padding: 10px 14px;
     border: 1.5px solid var(--border);
     border-radius: 6px;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 14px; color: var(--ink);
     background: var(--cream);
     transition: border-color 0.15s;
@@ -136,7 +136,7 @@
   .btn-add {
     width: 100%; padding: 9px; border: 1.5px dashed var(--border);
     background: transparent; border-radius: 6px;
-    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    font-family: 'Poppins', sans-serif; font-size: 13px;
     color: var(--ink-light); cursor: pointer; margin-top: 4px;
     transition: all 0.15s;
   }
@@ -169,7 +169,7 @@
     width: 100%; padding: 14px;
     background: var(--ink); color: var(--white);
     border: none; border-radius: 8px;
-    font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+    font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 600;
     cursor: pointer; margin-top: 24px;
     letter-spacing: 0.02em;
     transition: background 0.2s;
@@ -187,7 +187,7 @@
     width: 100%; padding: 11px;
     background: var(--success); color: var(--white);
     border: none; border-radius: 8px;
-    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+    font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 600;
     cursor: pointer; margin-top: 10px;
     transition: background 0.2s; display: none;
   }
@@ -292,7 +292,7 @@
 
   .page-number {
     position: absolute; bottom: 24px; right: 40px;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 9pt; color: #999;
   }
 
@@ -410,7 +410,7 @@
   .report-sub-panel textarea {
     width: 100%;
     box-sizing: border-box;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 12px;
     padding: 8px 10px;
     border: 1px solid var(--border);
@@ -757,6 +757,35 @@
 
     <!-- ── SCHOOL AUDIT sub-options ── -->
     <div id="report-sub-audit-school" class="report-sub-panel" style="display:none;">
+
+      <div class="report-sub-heading">Auditor</div>
+      <div class="options-group" style="margin-bottom:14px;">
+        <label class="option-pill">
+          <input type="radio" name="schoolAuditor" value="R DE BEER" checked onchange="liveUpdate()"> Reinette de Beer
+        </label>
+        <label class="option-pill">
+          <input type="radio" name="schoolAuditor" value="L VAN DER MERWE" onchange="liveUpdate()"> L van der Merwe (Oom Leon)
+        </label>
+      </div>
+
+      <div class="report-sub-heading">Preparer</div>
+      <div class="field-group" style="margin-bottom:10px;">
+        <label>Preparer Full Name</label>
+        <input type="text" id="schoolPreparerName" placeholder="e.g. Veronica Buchling" oninput="updateSchoolPreparerPreview(); liveUpdate()" style="margin-bottom:0;">
+      </div>
+      <div class="field-group" style="margin-bottom:6px;">
+        <label>Preparer Capacity</label>
+        <select id="schoolPreparerCapacity" onchange="onSchoolPreparerCapacityChange(); liveUpdate()">
+          <option value="financial officer">Financial Officer</option>
+          <option value="administrative officer">Administrative Officer</option>
+          <option value="independent accountant">Independent Accountant</option>
+          <option value="principal">Principal</option>
+          <option value="other">Other…</option>
+        </select>
+        <input type="text" id="schoolPreparerCapacityOther" placeholder="e.g. bookkeeper" style="display:none;margin-top:8px;" oninput="updateSchoolPreparerPreview(); liveUpdate()">
+      </div>
+      <p class="hint" id="school-preparer-preview" style="font-style:italic;color:#555;margin-bottom:14px;min-height:16px;"></p>
+
       <div class="report-sub-heading">Audit Opinion</div>
       <div class="options-group">
         <label class="option-pill">
@@ -774,12 +803,12 @@
         <textarea id="schoolAuditQualifiedText" rows="4" placeholder="Describe the basis for the qualified opinion…" oninput="liveUpdate()"></textarea>
       </div>
       <div class="conditional field-group visible" id="school-audit-other-box">
-        <label>Other Matter <span style="font-weight:400;color:#9090b0;font-size:11px;">(optional)</span></label>
-        <textarea id="schoolAuditOtherText" rows="3" placeholder="Describe any other matter to include (leave blank to omit)…" oninput="liveUpdate()"></textarea>
+        <label>Other Matter <span style="font-weight:400;color:#9090b0;font-size:11px;">(optional — leave blank to omit)</span></label>
+        <textarea id="schoolAuditOtherText" rows="3" placeholder="Describe any other matter to include…" oninput="liveUpdate()"></textarea>
       </div>
       <div class="conditional field-group" id="school-audit-disclaimer-box">
         <label>Basis for Disclaimer of Opinion</label>
-        <textarea id="schoolAuditDisclaimerText" rows="5" placeholder="List the matters that led to the disclaimer (e.g. 1. Fraudulent claims of R…&#10;2. Cash shortage of R…)" oninput="liveUpdate()"></textarea>
+        <textarea id="schoolAuditDisclaimerText" rows="6" placeholder="List matters that led to the disclaimer, one per line:&#10;1. Fraudulent claims of R …&#10;2. A cash shortage of R … could not be verified." oninput="liveUpdate()"></textarea>
       </div>
     </div>
 
@@ -916,7 +945,8 @@
       </select>
     </div>
 
-    <hr class="form-divider">
+    <hr class="form-divider" id="step6-divider">
+    <div id="step6-block">
     <div class="step-label">Step 6</div>
     <div class="section-title">Specific Matters (Directors' Report)</div>
 
@@ -1026,6 +1056,8 @@
       <label>Page References (financial statements end on page)</label>
       <input type="text" id="pageEnd" placeholder="e.g. 12" oninput="liveUpdate()" value="12">
     </div>
+
+    </div><!-- /step6-block -->
 
     <hr class="form-divider">
     <div class="step-label">Step 7</div>
@@ -1511,6 +1543,11 @@ function selectEntity(el, type) {
 
   onReportTypeChange();
 
+  // Hide Step 6 (Specific Matters) for School — not applicable
+  const hideStep6 = (type === 'school');
+  document.getElementById('step6-block').style.display   = hideStep6 ? 'none' : '';
+  document.getElementById('step6-divider').style.display = hideStep6 ? 'none' : '';
+
   liveUpdate();
 }
 
@@ -1542,11 +1579,31 @@ function onAuditTypeChange() {
 function onSchoolAuditTypeChange() {
   const t = getRadio('schoolAuditType');
   toggleVisible('school-audit-qualified-box',  t === 'qualified');
-  // Other Matter appears for both Unqualified and Qualified, hidden for Disclaimer
   const otherBox = document.getElementById('school-audit-other-box');
   if (otherBox) otherBox.classList.toggle('visible', t === 'unqualified' || t === 'qualified');
   toggleVisible('school-audit-disclaimer-box', t === 'disclaimer');
   liveUpdate();
+}
+
+function onSchoolPreparerCapacityChange() {
+  const v = document.getElementById('schoolPreparerCapacity')?.value;
+  const otherInput = document.getElementById('schoolPreparerCapacityOther');
+  if (otherInput) otherInput.style.display = (v === 'other') ? 'block' : 'none';
+  updateSchoolPreparerPreview();
+}
+
+function updateSchoolPreparerPreview() {
+  const name     = (document.getElementById('schoolPreparerName')?.value || '').trim();
+  const capEl    = document.getElementById('schoolPreparerCapacity');
+  const capRaw   = capEl?.value || 'financial officer';
+  const capOther = (document.getElementById('schoolPreparerCapacityOther')?.value || '').trim();
+  const cap      = capRaw === 'other' ? (capOther || '…') : capRaw;
+  const preview  = document.getElementById('school-preparer-preview');
+  if (preview) {
+    preview.textContent = name
+      ? `The financial statements were prepared under the supervision of ${name} in their capacity as ${cap}.`
+      : '';
+  }
 }
 
 function onReviewTypeChange() {
@@ -1579,26 +1636,25 @@ function toggleVisible(id, show) {
 function getReportSubState() {
   const type = getRadio('reportType');
   if (type === 'audit') {
-    // School uses a separate set of sub-options
     if (currentEntityType === 'school') {
       const sub = getRadio('schoolAuditType');
       return {
-        reportType:    'audit',
-        entityType:    'school',
-        subType:       sub,
-        qualifiedText: document.getElementById('schoolAuditQualifiedText')?.value.trim()  || '',
-        otherText:     document.getElementById('schoolAuditOtherText')?.value.trim()      || '',
-        disclaimerText:document.getElementById('schoolAuditDisclaimerText')?.value.trim() || '',
+        reportType:     'audit',
+        entityType:     'school',
+        subType:        sub,
+        qualifiedText:  document.getElementById('schoolAuditQualifiedText')?.value.trim()  || '',
+        otherText:      document.getElementById('schoolAuditOtherText')?.value.trim()      || '',
+        disclaimerText: document.getElementById('schoolAuditDisclaimerText')?.value.trim() || '',
       };
     }
     const sub = getRadio('auditType');
     return {
-      reportType: 'audit',
-      subType: sub,
-      qualifiedText:   document.getElementById('auditQualifiedText')?.value.trim()  || '',
-      emphasisText:    document.getElementById('auditEmphasisText')?.value.trim()   || '',
-      disclaimerText:  document.getElementById('auditDisclaimerText')?.value.trim() || '',
-      otherText:       document.getElementById('auditOtherText')?.value.trim()      || '',
+      reportType:    'audit',
+      subType:       sub,
+      qualifiedText:  document.getElementById('auditQualifiedText')?.value.trim()  || '',
+      emphasisText:   document.getElementById('auditEmphasisText')?.value.trim()   || '',
+      disclaimerText: document.getElementById('auditDisclaimerText')?.value.trim() || '',
+      otherText:      document.getElementById('auditOtherText')?.value.trim()      || '',
     };
   }
   if (type === 'review') {
@@ -1890,6 +1946,24 @@ function generateDoc() {
     </div>`;
   }
 
+  // Auditor block helper (for school and registered auditor reports)
+  function auditorBlock(signer, date) {
+    return `<div class="compiler-block">
+      <p>${signer}</p>
+      <p>REGISTERED AUDITOR (SA)</p>
+      <p>STANDERTON</p>
+      <p>${date}</p>
+    </div>`;
+  }
+
+  // ── School-specific auditor + preparer ──
+  const schoolAuditorSigner = getRadio('schoolAuditor') || 'R DE BEER';
+  const schoolPreparerName  = getVal('schoolPreparerName') || '[PREPARER NAME]';
+  const schoolCapRaw = document.getElementById('schoolPreparerCapacity')?.value || 'financial officer';
+  const schoolCapOther = getVal('schoolPreparerCapacityOther');
+  const schoolCapacity  = schoolCapRaw === 'other' ? (schoolCapOther || '[CAPACITY]') : schoolCapRaw;
+  const schoolPreparerSentence = `The financial statements were prepared under the supervision of ${schoolPreparerName} in their capacity as ${schoolCapacity}.`;
+
   // Preparer sentence based on compiler signer
   const preparerMap = {
     'L VAN DER MERWE':  'The financial statements were prepared under the supervision of Leon van der Merwe BComm. Honns. CA (SA) in his capacity as an independent professional accountant.',
@@ -1951,10 +2025,12 @@ function generateDoc() {
         <td>South African Rand</td>
       </tr>
       <tr>
-        <td>Compiler</td>
-        <td>VDM Chartered Accountants</td>
+        <td>${entityType === 'school' ? 'Auditor' : 'Compiler'}</td>
+        <td>${entityType === 'school' ? 'VDM Audit Inc.' : 'VDM Chartered Accountants'}</td>
       </tr>
-      ${preparerSentence ? `<tr><td>Preparer</td><td>${preparerSentence}</td></tr>` : ''}
+      ${entityType === 'school'
+        ? `<tr><td>Preparer</td><td>${schoolPreparerSentence}</td></tr>`
+        : preparerSentence ? `<tr><td>Preparer</td><td>${preparerSentence}</td></tr>` : ''}
       <tr>
         <td>Issued</td>
         <td>${dateOfIssue}</td>
@@ -2350,21 +2426,11 @@ function generateDoc() {
     <div class="page-number">${pg4}</div>
   </div>`;
 
-  // ── PAGE 3c: SCHOOL INDEPENDENT AUDITOR'S REPORT ──
+  // ── PAGE: SCHOOL INDEPENDENT AUDITOR'S REPORT ──
   const schoolSubState = (entityType === 'school') ? getReportSubState() : {};
   const schoolSub = schoolSubState.subType || 'unqualified';
 
-  function auditorBlock(signer, date) {
-    return `<div class="compiler-block">
-      <p>${signer}</p>
-      <p>REGISTERED AUDITOR (SA)</p>
-      <p>STANDERTON</p>
-      <p>${date}</p>
-    </div>`;
-  }
-
-  // Governing body responsibility + auditor responsibility paragraphs (shared across variants)
-  const schoolGoverningBodyResponsibilities = `
+  const schoolGBResponsibilities = `
     <h3>Responsibilities of the Governing Body for the Financial Statements</h3>
     <p>The school's governing body is responsible for the preparation and fair presentation of the financial statements in accordance with the <em>'Financial Reporting Guidelines for Schools'</em> and the requirements of the South African Schools Act, and for such internal control as the governing body determines is necessary to enable the preparation of financial statements that are free from material misstatement, whether due to fraud or error.</p>`;
 
@@ -2380,67 +2446,55 @@ function generateDoc() {
     </ul>
     <p>We communicate with the governing body regarding, among other matters, the planned scope and timing of the audit and significant audit findings, including any significant deficiencies in internal control that we identify during our audit.</p>`;
 
+  const schoolBasisForOpinion = `
+    <h3>Basis for Opinion</h3>
+    <p>We conducted our audit in accordance with <em>'International Standards on Auditing (ISAs)'</em>. Our responsibilities under those standards are further described in the <em>'Auditor's Responsibilities for the Audit of the Financial Statements'</em> section of our report. We are independent of the school in accordance with the <em>'Independent Regulatory Board for Auditors Code of Professional Conduct for Registered Auditors (IRBA Code)'</em> and other independence requirements applicable to performing audits of financial statements in South Africa. We have fulfilled our other ethical responsibilities in accordance with the <em>'IRBA Code'</em> and in accordance with other ethical requirements applicable to performing audits in South Africa. The <em>'IRBA Code'</em> is consistent with the <em>'International Ethics Standards Board for Accountants Code of Ethics for Professional Accountants (Parts A and B)'</em>. We believe that the audit evidence we have obtained is sufficient and appropriate to provide a basis for our opinion.</p>`;
+
   let pageSchoolAudit = '';
   if (schoolSub === 'unqualified') {
     const otherMatter = schoolSubState.otherText
-      ? `<h3>Other Matter</h3><p>${schoolSubState.otherText}</p>`
-      : '';
+      ? `<h3>Other Matter</h3><p>${schoolSubState.otherText}</p>` : '';
     pageSchoolAudit = `
   <div class="doc-page">
-    <div class="page-header">
-      <div class="co-name">${coUpper}</div>
-    </div>
+    <div class="page-header"><div class="co-name">${coUpper}</div></div>
     <h2>Independent Auditor's Report</h2>
     <p><em>To the Governing Body of ${co}</em></p>
     <h3>Opinion</h3>
     <p>We have audited the financial statements of ${co}, which comprise the statement of financial position as at ${yearEnd}, and the statement of financial performance, including a summary of significant accounting policies and other explanatory notes, as set out on pages ${pageStart} to ${pageEnd}.</p>
     <p>In our opinion, the financial statements present fairly, in all material respects, the financial position of ${co} as at ${yearEnd}, and its financial performance and cash flows for the year then ended in accordance with the <em>'Financial Reporting Frameworks for Schools (FRFFS)'</em> and the requirements of the South African Schools Act.</p>
     ${otherMatter}
-    <h3>Basis for Opinion</h3>
-    <p>We conducted our audit in accordance with <em>'International Standards on Auditing (ISAs)'</em>. Our responsibilities under those standards are further described in the <em>'Auditor's Responsibilities for the Audit of the Financial Statements'</em> section of our report. We are independent of the school in accordance with the <em>'Independent Regulatory Board for Auditors Code of Professional Conduct for Registered Auditors (IRBA Code)'</em> and other independence requirements applicable to performing audits of financial statements in South Africa. We have fulfilled our other ethical responsibilities in accordance with the <em>'IRBA Code'</em> and in accordance with other ethical requirements applicable to performing audits in South Africa. The <em>'IRBA Code'</em> is consistent with the <em>'International Ethics Standards Board for Accountants Code of Ethics for Professional Accountants (Parts A and B)'</em>. We believe that the audit evidence we have obtained is sufficient and appropriate to provide a basis for our opinion.</p>
-    ${schoolGoverningBodyResponsibilities}
+    ${schoolBasisForOpinion}
+    ${schoolGBResponsibilities}
     ${schoolAuditorResponsibilities}
-    ${auditorBlock(compilerSigner, dateSigned)}
-    <div class="page-number">${pg3}</div>
+    ${auditorBlock(schoolAuditorSigner, dateSigned)}
+    <div class="page-number">${pg2}</div>
   </div>`;
-
   } else if (schoolSub === 'qualified') {
-    const qualifiedBasis = schoolSubState.qualifiedText
-      ? schoolSubState.qualifiedText
-      : '[Describe the basis for the qualified opinion]';
+    const qualBasis = schoolSubState.qualifiedText || '[Describe the basis for the qualified opinion]';
     const otherMatter = schoolSubState.otherText
-      ? `<h3>Other Matter</h3><p>${schoolSubState.otherText}</p>`
-      : '';
+      ? `<h3>Other Matter</h3><p>${schoolSubState.otherText}</p>` : '';
     pageSchoolAudit = `
   <div class="doc-page">
-    <div class="page-header">
-      <div class="co-name">${coUpper}</div>
-    </div>
+    <div class="page-header"><div class="co-name">${coUpper}</div></div>
     <h2>Independent Auditor's Report</h2>
     <p><em>To the Governing Body of ${co}</em></p>
     <h3>Qualified Opinion</h3>
     <p>We have audited the financial statements of ${co}, which comprise the statement of financial position as at ${yearEnd}, and the statement of financial performance, including a summary of significant accounting policies and other explanatory notes, as set out on pages ${pageStart} to ${pageEnd}.</p>
     <p>In our opinion, except for the matter described in the Basis for Qualified Opinion paragraph, the financial statements present fairly, in all material respects, the financial position of ${co} as at ${yearEnd}, and its financial performance and cash flows for the year then ended in accordance with the <em>'Financial Reporting Frameworks for Schools (FRFFS)'</em> and the requirements of the South African Schools Act.</p>
     <h3>Basis for Qualified Opinion</h3>
-    <p>${qualifiedBasis}</p>
+    <p>${qualBasis}</p>
     ${otherMatter}
-    <h3>Basis for Opinion</h3>
-    <p>We conducted our audit in accordance with <em>'International Standards on Auditing (ISAs)'</em>. Our responsibilities under those standards are further described in the <em>'Auditor's Responsibilities for the Audit of the Financial Statements'</em> section of our report. We are independent of the school in accordance with the <em>'Independent Regulatory Board for Auditors Code of Professional Conduct for Registered Auditors (IRBA Code)'</em> and other independence requirements applicable to performing audits of financial statements in South Africa. We have fulfilled our other ethical responsibilities in accordance with the <em>'IRBA Code'</em> and in accordance with other ethical requirements applicable to performing audits in South Africa. The <em>'IRBA Code'</em> is consistent with the <em>'International Ethics Standards Board for Accountants Code of Ethics for Professional Accountants (Parts A and B)'</em>. We believe that the audit evidence we have obtained is sufficient and appropriate to provide a basis for our qualified opinion.</p>
-    ${schoolGoverningBodyResponsibilities}
+    ${schoolBasisForOpinion}
+    ${schoolGBResponsibilities}
     ${schoolAuditorResponsibilities}
-    ${auditorBlock(compilerSigner, dateSigned)}
-    <div class="page-number">${pg3}</div>
+    ${auditorBlock(schoolAuditorSigner, dateSigned)}
+    <div class="page-number">${pg2}</div>
   </div>`;
-
   } else if (schoolSub === 'disclaimer') {
-    const disclaimerBasis = schoolSubState.disclaimerText
-      ? schoolSubState.disclaimerText
-      : '[Describe the basis for the disclaimer of opinion]';
+    const disBasis = schoolSubState.disclaimerText || '[Describe the basis for the disclaimer of opinion]';
     pageSchoolAudit = `
   <div class="doc-page">
-    <div class="page-header">
-      <div class="co-name">${coUpper}</div>
-    </div>
+    <div class="page-header"><div class="co-name">${coUpper}</div></div>
     <h2>Independent Auditor's Report</h2>
     <p><em>To the Governing Body of ${co}</em></p>
     <h3>Disclaimer of Opinion</h3>
@@ -2449,11 +2503,11 @@ function generateDoc() {
     <h3>Basis for Disclaimer of Opinion</h3>
     <p>We conducted our audit in accordance with <em>'International Standards on Auditing (ISAs)'</em>. Our responsibilities under those standards are further described in the <em>'Auditor's Responsibilities for the Audit of the Financial Statements'</em> section of our report. We are independent of the school in accordance with the <em>'Independent Regulatory Board for Auditors Code of Professional Conduct for Registered Auditors (IRBA Code)'</em> and other independence requirements applicable to performing audits of financial statements in South Africa. We have fulfilled our other ethical responsibilities in accordance with the <em>'IRBA Code'</em> and in accordance with other ethical requirements applicable to performing audits in South Africa. The <em>'IRBA Code'</em> is consistent with the <em>'International Ethics Standards Board for Accountants Code of Ethics for Professional Accountants (Parts A and B)'</em>.</p>
     <p>Please note that for the year ending ${yearEnd}, the following came to our attention:</p>
-    <p style="white-space:pre-line;">${disclaimerBasis}</p>
-    ${schoolGoverningBodyResponsibilities}
+    <p style="white-space:pre-line;">${disBasis}</p>
+    ${schoolGBResponsibilities}
     ${schoolAuditorResponsibilities}
-    ${auditorBlock(compilerSigner, dateSigned)}
-    <div class="page-number">${pg3}</div>
+    ${auditorBlock(schoolAuditorSigner, dateSigned)}
+    <div class="page-number">${pg2}</div>
   </div>`;
   }
 
@@ -2472,8 +2526,8 @@ function generateDoc() {
       assembledPages = coverPage + page2 + pageAudit + page4 + policyPages;
     }
   } else if (entityType === 'school') {
-    // School: Cover + Responsibilities + School Auditor's Report + Directors' Report + Policies
-    assembledPages = coverPage + page2 + pageSchoolAudit + page4 + policyPages;
+    // School: Cover + School Audit Report + Policies (no Responsibilities, no Directors' Report)
+    assembledPages = coverPage + pageSchoolAudit + policyPages;
   } else if (entityType === 'church') {
     // Church: Cover + Responsibilities + Auditor's Report + Report + Policies
     assembledPages = coverPage + page2 + pageAudit + page4 + policyPages;
