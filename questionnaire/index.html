@@ -201,29 +201,49 @@
 
   input[type="date"] { color: var(--text); }
 
-  /* ── SAME AS ABOVE BUTTON ── */
-  .btn-same-as {
+  /* ── SAME AS ABOVE TOGGLE ── */
+  .same-as-toggle {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 10px;
+    padding: 8px 16px;
+    margin: 0 0 12px;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--card);
+    user-select: none;
+    transition: all 0.15s;
+  }
+  .same-as-toggle:hover {
+    border-color: var(--accent);
     background: var(--accent-bg);
     color: var(--navy);
-    padding: 6px 14px;
-    border-radius: 100px;
-    font-size: 11px;
-    font-weight: 600;
-    border: 1.5px solid var(--accent);
-    cursor: pointer;
+  }
+  .same-as-toggle .sa-box {
+    width: 16px; height: 16px;
+    border-radius: 3px;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
     transition: all 0.15s;
-    margin-bottom: 10px;
+    background: var(--card);
   }
-  .btn-same-as:hover {
+  .same-as-toggle .sa-box svg { width: 10px; height: 10px; opacity: 0; transition: opacity 0.15s; }
+  .same-as-toggle.checked {
+    border-color: var(--navy);
+    background: var(--navy);
+    color: #FFFFFF;
+  }
+  .same-as-toggle.checked .sa-box {
     background: var(--accent);
-    color: var(--navy);
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(200,169,81,0.3);
+    border-color: var(--accent);
   }
-  .btn-same-as:active { transform: translateY(0); }
+  .same-as-toggle.checked .sa-box svg { opacity: 1; color: var(--navy); }
+  .same-as-locked input { background: #F0F3F8 !important; color: var(--text-muted) !important; pointer-events: none; }
 </style>
 </head>
 <body>
@@ -287,17 +307,14 @@
           </div>
           <div class="section-divider"></div>
 
-          <!-- ★ NEW: Same as above button for Contact Person -->
-          <button type="button" class="btn-same-as" onclick="copyToContact()">📋 Contact Person — Same as Responsible Person</button>
-
           <!-- Responsible person label changes per type -->
           <div class="form-grid">
             <div class="field"><label id="ei_resp_label">Responsible Person</label><input type="text" id="ei_resp_dir" placeholder="Full name"></div>
-            <div class="field"><label>Contact Person</label><input type="text" id="ei_contact" placeholder="Full name"></div>
+            <div class="field"><label>Contact Person</label><label class="same-as-toggle" id="sa_contact" onclick="toggleSameAsContact()"><span class="sa-box"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Same as Responsible Person</label><input type="text" id="ei_contact" placeholder="Full name"></div>
             <div class="field"><label id="ei_email_label">Email Address</label><input type="email" id="ei_email" placeholder="entity@example.com"></div>
-            <div class="field"><label>Email (Contact Person)</label><input type="email" id="ei_email_contact" placeholder="contact@example.com"></div>
+            <div class="field" id="ei_contact_email_wrap"><label>Email (Contact Person)</label><input type="email" id="ei_email_contact" placeholder="contact@example.com"></div>
             <div class="field"><label>Telephone Number</label><input type="tel" id="ei_tel" placeholder="0XX XXX XXXX"></div>
-            <div class="field"><label>Telephone (Contact)</label><input type="tel" id="ei_tel_contact" placeholder="0XX XXX XXXX"></div>
+            <div class="field" id="ei_contact_tel_wrap"><label>Telephone (Contact)</label><input type="tel" id="ei_tel_contact" placeholder="0XX XXX XXXX"></div>
           </div>
         </div>
       </div>
@@ -345,12 +362,11 @@
             Contact Information
           </div>
           <div class="card-body">
-            <!-- ★ NEW: Same as Step 1 button -->
-            <button type="button" class="btn-same-as" onclick="copyToStep2Contact()">📋 Same as Step 1 — Responsible Person</button>
+            <label class="same-as-toggle" id="sa_step2" onclick="toggleSameAsStep2()" style="margin-bottom:16px"><span class="sa-box"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></span>Same as Step 1 — Responsible Person</label>
             <div class="form-grid">
-              <div class="field"><label>Responsible Person <span class="req">*</span></label><input type="text" id="ci_responsible" placeholder="Full name"></div>
+              <div class="field" id="ci_resp_wrap"><label>Responsible Person <span class="req">*</span></label><input type="text" id="ci_responsible" placeholder="Full name"></div>
               <div class="field"><label>Contact Number <span class="req">*</span></label><input type="tel" id="ci_tel" placeholder="0XX XXX XXXX"></div>
-              <div class="field"><label>Email Address <span class="req">*</span></label><input type="email" id="ci_email" placeholder="email@example.com"></div>
+              <div class="field" id="ci_email_wrap"><label>Email Address <span class="req">*</span></label><input type="email" id="ci_email" placeholder="email@example.com"></div>
               <div class="field"><label>Debtors Contact Email</label><input type="email" id="ci_debtors_email" placeholder="debtors@example.com"></div>
               <div class="field span-2"><label>Secretarial Contact Email <span style="font-weight:400;font-style:italic;text-transform:none;letter-spacing:0">(if annual CIPC company licenses apply)</span></label><input type="email" id="ci_secretarial_email" placeholder="secretarial@example.com"></div>
             </div>
@@ -779,16 +795,46 @@ function submitForm() {
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ── SAME AS ABOVE HELPERS ──
-function copyToContact() {
-  document.getElementById('ei_contact').value = document.getElementById('ei_resp_dir').value;
-  document.getElementById('ei_email_contact').value = document.getElementById('ei_email').value;
-  document.getElementById('ei_tel_contact').value = document.getElementById('ei_tel').value;
+// ── SAME AS ABOVE TOGGLES ──
+function toggleSameAsContact() {
+  const toggle = document.getElementById('sa_contact');
+  const isChecked = toggle.classList.toggle('checked');
+  const fields = [
+    document.getElementById('ei_contact'),
+    document.getElementById('ei_email_contact'),
+    document.getElementById('ei_tel_contact')
+  ];
+  const wraps = ['ei_contact', 'ei_contact_email_wrap', 'ei_contact_tel_wrap']
+    .map(id => document.getElementById(id)?.closest('.field'));
+  if (isChecked) {
+    document.getElementById('ei_contact').value = document.getElementById('ei_resp_dir').value;
+    document.getElementById('ei_email_contact').value = document.getElementById('ei_email').value;
+    document.getElementById('ei_tel_contact').value = document.getElementById('ei_tel').value;
+    wraps.forEach(w => { if (w) w.classList.add('same-as-locked'); });
+  } else {
+    fields.forEach(f => f.value = '');
+    wraps.forEach(w => { if (w) w.classList.remove('same-as-locked'); });
+  }
 }
-function copyToStep2Contact() {
-  document.getElementById('ci_responsible').value = document.getElementById('ei_resp_dir').value;
-  document.getElementById('ci_tel').value = document.getElementById('ei_tel').value;
-  document.getElementById('ci_email').value = document.getElementById('ei_email').value;
+
+function toggleSameAsStep2() {
+  const toggle = document.getElementById('sa_step2');
+  const isChecked = toggle.classList.toggle('checked');
+  const respWrap = document.getElementById('ci_resp_wrap');
+  const emailWrap = document.getElementById('ci_email_wrap');
+  if (isChecked) {
+    document.getElementById('ci_responsible').value = document.getElementById('ei_resp_dir').value;
+    document.getElementById('ci_tel').value = document.getElementById('ei_tel').value;
+    document.getElementById('ci_email').value = document.getElementById('ei_email').value;
+    if (respWrap) respWrap.classList.add('same-as-locked');
+    if (emailWrap) emailWrap.classList.add('same-as-locked');
+  } else {
+    document.getElementById('ci_responsible').value = '';
+    document.getElementById('ci_tel').value = '';
+    document.getElementById('ci_email').value = '';
+    if (respWrap) respWrap.classList.remove('same-as-locked');
+    if (emailWrap) emailWrap.classList.remove('same-as-locked');
+  }
 }
 
 // Init
