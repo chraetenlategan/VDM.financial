@@ -728,6 +728,11 @@
     <div class="section-title">Entity Type</div>
 
     <div class="entity-grid" style="grid-template-columns:1fr 1fr;">
+      <div class="entity-card" id="ec-attorneys" onclick="selectEntity(this,'attorneys')">
+        <span class="ec-icon">⚖️</span>
+        <span class="ec-label">Attorneys</span>
+        <span class="ec-sub">Legal Practitioners — Directors</span>
+      </div>
       <div class="entity-card" id="ec-company" onclick="selectEntity(this,'company')">
         <span class="ec-icon">🏢</span>
         <span class="ec-label">Company</span>
@@ -1082,17 +1087,29 @@
           </label>
         </div>
         <div id="engagement-types-panel" style="display:none;margin-top:10px;padding:12px 16px;background:var(--panel);border-radius:8px;border:1px solid var(--border);">
-          <label style="font-size:12px;font-weight:600;color:var(--ink-light);display:block;margin-bottom:8px;">Select engagement letter type(s):</label>
-          <div style="display:flex;flex-wrap:wrap;gap:10px;">
-            <label class="option-pill" style="display:inline-flex;align-items:center;gap:6px;">
-              <input type="checkbox" id="engTypeAccounting" onchange="liveUpdate()"> Accounting
-            </label>
-            <label class="option-pill" style="display:inline-flex;align-items:center;gap:6px;">
-              <input type="checkbox" id="engTypeReview" onchange="liveUpdate()"> Review
-            </label>
-            <label class="option-pill" style="display:inline-flex;align-items:center;gap:6px;">
-              <input type="checkbox" id="engTypeAudit" onchange="liveUpdate()"> Audit
-            </label>
+          <div id="engagement-types-standard">
+            <label style="font-size:12px;font-weight:600;color:var(--ink-light);display:block;margin-bottom:8px;">Select engagement letter type(s):</label>
+            <div style="display:flex;flex-wrap:wrap;gap:10px;">
+              <label class="option-pill" style="display:inline-flex;align-items:center;gap:6px;">
+                <input type="checkbox" id="engTypeAccounting" onchange="liveUpdate()"> Accounting
+              </label>
+              <label class="option-pill" style="display:inline-flex;align-items:center;gap:6px;">
+                <input type="checkbox" id="engTypeReview" onchange="liveUpdate()"> Review
+              </label>
+              <label class="option-pill" style="display:inline-flex;align-items:center;gap:6px;">
+                <input type="checkbox" id="engTypeAudit" onchange="liveUpdate()"> Audit
+              </label>
+            </div>
+          </div>
+          <div id="engagement-types-attorneys" style="display:none;">
+            <p style="font-size:12px;color:var(--ink-light);margin:0;">✓ Reasonable Assurance Engagement — Legal Practitioners' Trust Accounts (Audit letterhead)</p>
+            <div class="field-group" style="margin-top:10px;margin-bottom:0;">
+              <label style="font-size:12px;font-weight:600;">Engagement Letter Signed By</label>
+              <div class="options-group" style="margin-top:4px;">
+                <label class="option-pill"><input type="radio" name="attEngSigner" value="R DE BEER" checked onchange="liveUpdate()"> R de Beer (Reinette)</label>
+                <label class="option-pill"><input type="radio" name="attEngSigner" value="L VAN DER MERWE" onchange="liveUpdate()"> L van der Merwe (Oom Leon)</label>
+              </div>
+            </div>
           </div>
         </div>
         <p class="hint">If yes, the selected engagement letter(s) will be appended to the generated document.</p>
@@ -1828,6 +1845,18 @@ function updateBank() {
 
 // ── ENTITY CONFIG ──
 const ENTITY_CONFIG = {
+  attorneys: {
+    nameLabel:    'Firm Name (as it appears on documents)',
+    regLabel:     'Registration Number',
+    namePlaceholder: 'e.g. Cronje, de Waal - Skhosana Incorporated',
+    regPlaceholder:  'e.g. 2005/012345/21',
+    bodyTitle:    'Directors / Partners',
+    pluralTerm:   'Directors',
+    singularTerm: 'Director',
+    reportTo:     'Directors',
+    addBtnLabel:  '+ Add Director / Partner',
+    allowedReports: ['audit']
+  },
   company: {
     nameLabel:    'Company Name (as it appears on documents)',
     regLabel:     'Registration Number',
@@ -1975,8 +2004,8 @@ function selectEntity(el, type) {
 
   onReportTypeChange();
 
-  // Hide Step 6 (Specific Matters) for School, NPO, BC, Club, Church, Trust — not applicable
-  const hideStep6 = (type === 'school' || type === 'npo' || type === 'bc' || type === 'club' || type === 'church' || type === 'trust');
+  // Hide Step 6 (Specific Matters) for School, NPO, BC, Club, Church, Trust, Attorneys — not applicable
+  const hideStep6 = (type === 'school' || type === 'npo' || type === 'bc' || type === 'club' || type === 'church' || type === 'trust' || type === 'attorneys');
   document.getElementById('step6-block').style.display   = hideStep6 ? 'none' : '';
   document.getElementById('step6-divider').style.display = hideStep6 ? 'none' : '';
 
@@ -2037,6 +2066,7 @@ function onReportTypeChange() {
   // Show engagement letter question for all report types (except school)
   const engBlock = document.getElementById('engagement-block');
   if (engBlock) engBlock.style.display = (!isSchool) ? 'block' : 'none';
+  toggleEngagementTypes();
 
   updatePreparerPreview();
   liveUpdate();
@@ -2045,6 +2075,9 @@ function onReportTypeChange() {
 function toggleEngagementTypes() {
   const show = getRadio('engagementLetter') === 'yes';
   document.getElementById('engagement-types-panel').style.display = show ? 'block' : 'none';
+  const isAtt = currentEntityType === 'attorneys';
+  document.getElementById('engagement-types-standard').style.display = isAtt ? 'none' : 'block';
+  document.getElementById('engagement-types-attorneys').style.display = isAtt ? 'block' : 'none';
   if (!show) {
     document.getElementById('engTypeAccounting').checked = false;
     document.getElementById('engTypeReview').checked = false;
@@ -3438,13 +3471,118 @@ function generateDoc() {
   </div>`;
   }
 
+  // ── ATTORNEYS TRUST ACCOUNT ENGAGEMENT LETTER (Audit Letterhead) ──
+  function buildAttorneysEngagementLetter() {
+    const attSignerMap = {
+      'R DE BEER':       { name: 'Reinette De Beer', irba: '217890' },
+      'L VAN DER MERWE': { name: 'L van der Merwe',  irba: '______' }
+    };
+    const attSignerVal = getRadio('attEngSigner') || 'R DE BEER';
+    const attSigner    = attSignerMap[attSignerVal] || attSignerMap['R DE BEER'];
+
+    // Compute period: "1 March [prevYear] to the year ended [yearEnd]"
+    const yeParts = yearEnd.match(/(\d{1,2})\s+(\w+)\s+(\d{4})/);
+    let periodStart = '1 March [YEAR]';
+    if (yeParts) {
+      const yeYear = parseInt(yeParts[3]);
+      periodStart = `1 March ${yeYear - 1}`;
+    }
+    const periodStr = `the period from ${periodStart} to the year ended ${yearEnd}`;
+
+    return `
+  <div class="doc-page" style="font-size:9.5pt;">
+    ${auditLetterhead()}
+    <br>
+    <p style="margin:0;line-height:1.6;">To the Directors</p>
+    <p style="margin:0;line-height:1.6;font-weight:bold;">${co}</p>
+    <p style="margin:0;line-height:1.6;">${dateSigned || '[DATE]'}</p>
+    <br>
+    <p>Dear Directors</p>
+    <p><strong>Engagement Letter</strong></p>
+    <p><strong>Independent Auditor's Reasonable Assurance Engagement on Legal Practitioners' Trust Accounts</strong></p>
+    <p>You have requested that we undertake:</p>
+    <p><em>A reasonable assurance engagement on whether the legal practitioners' trust accounts of ${co} were maintained, in all material respects, in compliance with Section 86, read with Section 63(1)(g), and Sections 87(1), 87(3) and 87(4) of the Legal Practice Act, No. 28 of 2014 (the Act), and Rules 54.6–54.13, 54.14.1–54.14.6, 54.14.7.2, 54.14.7.3, 54.14.8–54.14.16, 54.15, 54.16, 54.17, 54.18, 54.19, 54.31, 54.32, 54.33, 54.34, 54.35 and 55.1–55.11 of the South African Legal Practice Council Rules (the Rules), made under the authority of Sections 95(1), 95(3) and 109(2) of the Act, for ${periodStr}.</em></p>
+    <p>We clarify that we are not required to perform any procedures on records or documents relating to accounting for deceased estates, insolvent estates and trusts other than those dealt with via the legal practitioner's trust banking account(s).</p>
+    <p>In terms of the Advisory issued by the Legal Practice Council dated 17 April 2020, to agree the information extracted from the accounting records and included in the Legal Practitioner's Annual Statement on Trust Accounts for ${periodStr}, to the underlying records that were the subject of our engagement on whether the legal practitioners' trust accounts were maintained in compliance with the Act and the Rules that will accompany our assurance report to be submitted to the Legal Practice Council and report thereon.</p>
+    <p>In terms of the Advisory issued by the Legal Practice Council dated 17 April 2020, to also read your representations, the disclosures and other information in your Legal Practitioner's Annual Statement on Trust Accounts for the purpose of identifying any information that is inconsistent, based on our knowledge obtained in our engagement on the compliance of your legal practitioners' trust accounts with the Act and the Rules and report thereon.</p>
+    <p>Further, in terms of Rule 54.24.3, to report on whether or not, to the best of our knowledge, you have for ${periodStr}, carried on the business of an investment practice and complied with the related investment practice Rules, as required.</p>
+    <p><strong><em>Directors' responsibility for the trust accounts</em></strong></p>
+    <p>You are responsible for ensuring that your legal practitioners' trust accounts are maintained in compliance with the Act and the Rules; and for such internal control as you determine is necessary to maintain the integrity of those trust accounts in accordance with the relevant client mandates, including such controls as you determine are necessary to prevent and detect fraud and theft. You are also responsible for preparing the Legal Practitioner's Annual Statement on Trust Accounts and for the financial information and declarations contained therein and to provide us with:</p>
+    <ul>
+      <li>Access to all information that the directors are aware of that is relevant to our engagement, including such business account records as we consider necessary;</li>
+      <li><em>Additional information that we may request from the directors for the purpose of our engagement; and</em></li>
+      <li>Unrestricted access to persons within the practice from whom we determine it necessary to obtain audit evidence.</li>
+    </ul>
+    <p>You are responsible for ensuring that the practice complies with relevant legislation.</p>
+    <p>As part of our engagement, we will request from you written confirmation concerning representations made to us in connection with our engagement. We will also ask you to confirm in that letter that all important and relevant information has been brought to our attention.</p>
+    <p><strong><em>Auditor's independence and quality control</em></strong></p>
+    <p>VDM Audit applies the International Standard on Quality Control 1, Quality Control for Firms that Perform Audits and Reviews of Financial Statements and Other Assurance and Related Services Engagements and accordingly maintains a comprehensive system of quality control, including documented policies and procedures regarding compliance with ethical requirements, professional standards and applicable legal and regulatory requirements.</p>
+    <p><strong><em>Auditor's responsibility</em></strong></p>
+    <p>Our responsibility is to express a reasonable assurance opinion on whether your legal practitioners' trust accounts were maintained in compliance with the Act and the Rules, based on our assurance procedures performed; and to report, as required, on the Legal Practitioner's Annual Statement on Trust Accounts and investment practice.</p>
+    <p><em>We will conduct our engagement in accordance with the International Standard on Assurance Engagements 3000 (Revised), Assurance Engagements Other than Audits or Reviews of Historical Financial Information (ISAE 3000 (Revised)), issued by the International Auditing and Assurance Standards Board. That standard requires that we plan and perform the engagement to obtain reasonable assurance about whether your legal practitioners' trust accounts were maintained, in all material respects, in compliance with the Act and the Rules, based on our assurance procedures to be performed; and to report, as required, on your Legal Practitioner's Annual Statement on Trust Accounts and investment practice.</em></p>
+    <p>A reasonable assurance engagement in accordance with ISAE 3000 (Revised) involves performing procedures to obtain evidence about whether the legal practitioners' trust accounts were maintained in compliance with the Act and the Rules. The nature, timing and extent of the procedures selected depend on our professional judgement, including the assessment of the risks of non-compliance with the Act and Rules, whether due to fraud, theft and error. In making those risk assessments, we will consider internal control that is relevant to the engagement in order to design procedures that are appropriate in the circumstances, but not for the purpose of expressing an opinion on the effectiveness of internal control. Our engagement will include the following procedures:</p>
+    <ul>
+      <li><em>Considering, and applying when applicable in the engagement circumstances, the guidance in the Guide for Registered Auditors: Engagements on Legal Practitioners' Trust Accounts (Revised March 2020) issued by the IRBA.</em></li>
+      <li>Making inquiries of the legal practitioner and persons within the practice.</li>
+      <li>Testing of transactions for all significant service activities, with the objective of evaluating whether:
+        <ul>
+          <li>Transactions were appropriately identified as trust account transactions;</li>
+          <li>Trust account transactions were made in accordance with mandates and supported by adequate documentation and narrative to identify from whom funds were received, and for whose credit;</li>
+          <li>Deposits and withdrawals from the trust bank accounts were to, or for, a trust creditor; and</li>
+          <li>Transfers to the legal practitioner's business bank accounts were only in respect of monies to be due to the legal practitioner.</li>
+        </ul>
+      </li>
+      <li>Testing and/or scrutinising bank reconciliations, as we consider appropriate in the engagement circumstances, and evaluating the records made available to us against the external confirmations requested from financial institutions.</li>
+    </ul>
+    <p>Reasonable assurance is a high level of assurance, but is not a guarantee that an assurance engagement conducted in accordance with ISAE 3000 (Revised) will always detect a material misstatement when it exists. Misstatements can arise from actions or omissions to act due to fraud, theft or error and are considered material if they, individually or in aggregate, could reasonably be expected to influence relevant decisions of users taken on the basis of the subject matter information.</p>
+    <p>Due to the inherent limitations of an assurance engagement together with the inherent limitations of internal control, there is an unavoidable risk that some material misstatements may not be detected, even though the engagement is properly planned and performed in accordance with ISAE 3000 (Revised).</p>
+    <p>We shall not be responsible for reporting on any relevant events or transactions beyond the period covered by our reasonable assurance engagement. As part of an assurance engagement in accordance with ISAE 3000 (Revised), we exercise professional judgement and maintain professional scepticism throughout the engagement.</p>
+    <p><strong><em>Other matters</em></strong></p>
+    <p>None</p>
+    <p><strong><em>Our Report on the Compliance of the Legal Practitioner's Trust Accounts with the Act and the Rules</em></strong></p>
+    <p><em>We expect to issue a report containing an opinion that the legal practitioners' trust accounts of ${co} for ${periodStr} were maintained, in all material respects, in compliance with the Act and the Rules. However, should our evidence obtained not support that opinion, we are required by ISAE 3000 (Revised) to modify our opinion, listing exceptions and instances of non-compliance identified, or giving an explanation for reporting non-compliance.</em></p>
+    <p><strong><em>Report on Other Legal and Regulatory Requirements</em></strong></p>
+    <p><strong><em>Our Report on the Legal Practitioner's Annual Statement on Trust Accounts</em></strong></p>
+    <p>In terms of the Advisory issued by the Legal Practice Council dated 17 April 2020, we expect to report that we have agreed the information included in the attached Legal Practitioner's Annual Statement on Trust Accounts for ${periodStr} to the underlying records that were the subject of our engagement on whether the legal practitioner's trust accounts were maintained in compliance with the Act and the Rules.</p>
+    <p>We also expect to report that based on our reading of the legal practitioner's representations, the disclosures and other information contained in the Legal Practitioner's Annual Statement on Trust Accounts, we have not identified any information that is inconsistent with our knowledge obtained in the course of our engagement. We will state in our report that our opinion on the legal practitioner's trust accounts does not cover the Legal Practitioner's Annual Statement on Trust Accounts and we do not express an opinion thereon.</p>
+    <p>However, should our evidence obtained not support a positive report, our report will be amended accordingly.</p>
+    <p>Should we not be able to report as expected, we will discuss matters with you before finalising our report.</p>
+    <p><strong><em>Our report on the Legal Practitioner's Investment Practice</em></strong></p>
+    <p>In terms of Rule 54.24.3, we expect to report on whether or not, to the best of our knowledge, you have for ${periodStr}, carried on a business of an investment practice and complied with the related investment practice Rules.</p>
+    <p><strong><em>Reportable irregularities</em></strong></p>
+    <p>Please note that this assurance engagement meets the definition of audit, as contained in the Auditing Profession Act, 2005 (APA). We are subject to the requirements of Section 45 of the APA, and have a duty to report to the IRBA on reportable irregularities, as defined in the APA, that may be identified in the course of our engagement.</p>
+    <p>Where a reportable irregularity has been reported to the IRBA, we are required to include a paragraph on "Report on Other Legal and Regulatory Requirements" in our report, disclosing information relating to the reportable irregularity.</p>
+    <p><strong><em>Non-compliance with Laws and Regulations</em></strong></p>
+    <p>We wish to draw your attention to the professional obligation of the directors and employees of the audit firm to respond to identified or suspected Non-compliance with Laws and Regulations, as required in terms of Section 360 of the IRBA Code; and this may include the reporting of the non-compliance or suspected non-compliance to an appropriate authority under the appropriate circumstances.</p>
+    <p><strong><em>Restriction on the use and distribution of our report</em></strong></p>
+    <p>Our report will state that it is provided for the purpose indicated in the report; and it is not suitable for any other purpose; and that it is intended solely for your use, that of the Legal Practice Council and the Legal Practitioners Fidelity Fund; and should not be distributed to other parties.</p>
+    <p>Please sign and return the attached copy of this letter to indicate your acknowledgement of, and agreement with, the arrangements for our reasonable assurance engagement on whether your legal practitioners' trust accounts were maintained in compliance with the Act and the Rules; and to report, as required, on the Legal Practitioner's Annual Statement on Trust Accounts and investment practice, including our respective responsibilities.</p>
+    <br>
+    <p><strong><em>Registered Auditor's Signature</em></strong></p>
+    <br><br>
+    <p>________________________</p>
+    <p>${attSigner.name}</p>
+    <p>IRBA Registration Number ${attSigner.irba}</p>
+    <p>VDM Audit</p>
+    <br>
+    <p>Acknowledged and agreed by the directors</p>
+    <p>Yours faithfully</p>
+    <br>
+    ${engSigBlock}
+  </div>`;
+  }
+
   // ── CONDITIONAL ENGAGEMENT LETTER ASSEMBLY ──
   const wantsEngagement = getRadio('engagementLetter') === 'yes';
   let engagementLetterPages = '';
   if (wantsEngagement) {
-    if (document.getElementById('engTypeAccounting').checked) engagementLetterPages += buildAccountingEngagementLetter();
-    if (document.getElementById('engTypeReview').checked)     engagementLetterPages += buildReviewEngagementLetter();
-    if (document.getElementById('engTypeAudit').checked)      engagementLetterPages += buildAuditEngagementLetter();
+    if (entityType === 'attorneys') {
+      engagementLetterPages = buildAttorneysEngagementLetter();
+    } else {
+      if (document.getElementById('engTypeAccounting').checked) engagementLetterPages += buildAccountingEngagementLetter();
+      if (document.getElementById('engTypeReview').checked)     engagementLetterPages += buildReviewEngagementLetter();
+      if (document.getElementById('engTypeAudit').checked)      engagementLetterPages += buildAuditEngagementLetter();
+    }
   }
 
   // ── TRUST MINUTES PAGE ──
@@ -3781,7 +3919,10 @@ function generateDoc() {
 
   let assembledPages = '';
 
-  if (entityType === 'trust') {
+  if (entityType === 'attorneys') {
+    // Attorneys: Cover + Audit Report + Policies + Engagement Letter + Repr Letter
+    assembledPages = coverPage + pageAudit + policyPages + engagementLetterPages + reprLetter;
+  } else if (entityType === 'trust') {
     // Trust: Cover + CA Declaration + Compiler's Report + Minutes + Policies + Loan Certs + Engagement Letters + Repr Letter
     assembledPages = coverPage + page1 + page3 + pageTrustMinutes + policyPages + loanCertPages + engagementLetterPages + reprLetter;
   } else if (entityType === 'npo') {
