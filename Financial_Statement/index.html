@@ -478,7 +478,7 @@
     }
 
     .doc-page .page-header {
-      text-align: center;
+      text-align: left;
       margin-bottom: 20px;
       padding-bottom: 14px;
       border-bottom: 0.5px solid #bbb;
@@ -602,7 +602,7 @@
     }
 
     .cover-title-block {
-      text-align: center;
+      text-align: left;
       margin-bottom: 36px;
       padding-bottom: 20px;
       border-bottom: 2px solid #111;
@@ -979,6 +979,106 @@
     .highlighted {
       background: #fffbe6;
     }
+
+    /* ── DATE PICKER ── */
+    .date-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .date-input-wrap input {
+      flex: 1;
+    }
+    .btn-cal {
+      flex-shrink: 0;
+      width: 34px;
+      height: 38px;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      background: var(--cream);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      color: var(--ink-light);
+    }
+    .btn-cal:hover {
+      border-color: var(--gold);
+      background: #fffbf0;
+      color: var(--gold);
+    }
+    .cal-popup {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      z-index: 9999;
+      background: var(--white);
+      border: 1.5px solid var(--gold);
+      border-radius: 10px;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.14);
+      padding: 14px;
+      min-width: 260px;
+      font-family: 'Poppins', sans-serif;
+    }
+    .cal-popup.hidden { display: none; }
+    .cal-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .cal-nav button {
+      background: none;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      color: var(--ink-light);
+      padding: 2px 8px;
+      border-radius: 4px;
+      transition: background 0.12s;
+    }
+    .cal-nav button:hover { background: var(--panel); }
+    .cal-nav .cal-month-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+    }
+    .cal-grid .cal-dow {
+      text-align: center;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-light);
+      padding: 3px 0;
+    }
+    .cal-grid .cal-day {
+      text-align: center;
+      font-size: 12px;
+      padding: 5px 2px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .cal-grid .cal-day:hover { background: var(--gold-light); }
+    .cal-grid .cal-day.today {
+      font-weight: 700;
+      color: var(--gold);
+    }
+    .cal-grid .cal-day.selected {
+      background: var(--gold);
+      color: var(--white);
+      font-weight: 600;
+    }
+    .cal-grid .cal-day.empty { cursor: default; }
+    .cal-grid .cal-day.empty:hover { background: none; }
   </style>
 </head>
 
@@ -1108,14 +1208,22 @@
 
       <div class="field-group">
         <label>Financial Year End</label>
-        <input type="text" id="yearEnd" placeholder="e.g. 28 February 2025" oninput="autoFillPrevYear(); liveUpdate()">
+        <div class="date-input-wrap">
+          <input type="text" id="yearEnd" placeholder="e.g. 28 February 2025" oninput="autoFillPrevYear(); liveUpdate()">
+          <button type="button" class="btn-cal" onclick="toggleCal('cal-yearEnd')" title="Pick date">📅</button>
+          <div id="cal-yearEnd" class="cal-popup hidden"></div>
+        </div>
       </div>
 
       <div class="field-group">
         <label>Previous Year End <span style="font-weight:400;color:#9090b0;font-size:11px;">(auto-filled from year
             end)</span></label>
-        <input type="text" id="prevYearEnd" placeholder="Auto-filled when year end is entered" oninput="liveUpdate()"
-          style="background:#f9f7f2;">
+        <div class="date-input-wrap">
+          <input type="text" id="prevYearEnd" placeholder="Auto-filled when year end is entered" oninput="liveUpdate()"
+            style="background:#f9f7f2;">
+          <button type="button" class="btn-cal" onclick="toggleCal('cal-prevYearEnd')" title="Pick date">📅</button>
+          <div id="cal-prevYearEnd" class="cal-popup hidden"></div>
+        </div>
       </div>
 
       <div class="field-group">
@@ -1442,17 +1550,29 @@
 
       <div class="field-group">
         <label>Date Financial Statements Approved</label>
-        <input type="text" id="dateApproved" placeholder="e.g. 19 January 2025" oninput="liveUpdate()">
+        <div class="date-input-wrap">
+          <input type="text" id="dateApproved" placeholder="e.g. 19 January 2025" oninput="liveUpdate()">
+          <button type="button" class="btn-cal" onclick="toggleCal('cal-dateApproved')" title="Pick date">📅</button>
+          <div id="cal-dateApproved" class="cal-popup hidden"></div>
+        </div>
       </div>
 
       <div class="field-group">
         <label>Date Signed by Compiler</label>
-        <input type="text" id="dateSigned" placeholder="e.g. 2025.01.19" oninput="liveUpdate()">
+        <div class="date-input-wrap">
+          <input type="text" id="dateSigned" placeholder="e.g. 2025.01.19" oninput="liveUpdate()">
+          <button type="button" class="btn-cal" onclick="toggleCal('cal-dateSigned')" title="Pick date">📅</button>
+          <div id="cal-dateSigned" class="cal-popup hidden"></div>
+        </div>
       </div>
 
       <div class="field-group">
         <label>Date of Issue (cover page)</label>
-        <input type="text" id="dateOfIssue" placeholder="e.g. 2 February 2026" oninput="liveUpdate()">
+        <div class="date-input-wrap">
+          <input type="text" id="dateOfIssue" placeholder="e.g. 2 February 2026" oninput="liveUpdate()">
+          <button type="button" class="btn-cal" onclick="toggleCal('cal-dateOfIssue')" title="Pick date">📅</button>
+          <div id="cal-dateOfIssue" class="cal-popup hidden"></div>
+        </div>
       </div>
 
       <div class="field-group">
@@ -1770,7 +1890,11 @@
 
         <div class="field-group">
           <label>Meeting Date</label>
-          <input type="text" id="bcAGMDate" placeholder="e.g. 30 October 2025" oninput="liveUpdate()">
+          <div class="date-input-wrap">
+            <input type="text" id="bcAGMDate" placeholder="e.g. 30 October 2025" oninput="liveUpdate()">
+            <button type="button" class="btn-cal" onclick="toggleCal('cal-bcAGMDate')" title="Pick date">📅</button>
+            <div id="cal-bcAGMDate" class="cal-popup hidden"></div>
+          </div>
         </div>
 
       </div>
@@ -1791,7 +1915,11 @@
 
         <div class="field-group">
           <label>Meeting Date</label>
-          <input type="text" id="trustAGMDate" placeholder="e.g. 1 March 2025" oninput="liveUpdate()">
+          <div class="date-input-wrap">
+            <input type="text" id="trustAGMDate" placeholder="e.g. 1 March 2025" oninput="liveUpdate()">
+            <button type="button" class="btn-cal" onclick="toggleCal('cal-trustAGMDate')" title="Pick date">📅</button>
+            <div id="cal-trustAGMDate" class="cal-popup hidden"></div>
+          </div>
         </div>
 
         <div class="field-group">
@@ -1945,7 +2073,11 @@
 
         <div class="field-group">
           <label>Meeting Date</label>
-          <input type="text" id="minutes-date" placeholder="e.g. 24 January 2025" oninput="liveUpdate()">
+          <div class="date-input-wrap">
+            <input type="text" id="minutes-date" placeholder="e.g. 24 January 2025" oninput="liveUpdate()">
+            <button type="button" class="btn-cal" onclick="toggleCal('cal-minutes-date')" title="Pick date">📅</button>
+            <div id="cal-minutes-date" class="cal-popup hidden"></div>
+          </div>
         </div>
 
         <hr style="border:none;border-top:1px dashed var(--border);margin:16px 0 14px;">
@@ -1979,7 +2111,11 @@
 
         <div class="field-group">
           <label>Meeting Date</label>
-          <input type="text" id="cc-minutes-date" placeholder="e.g. 24 January 2025" oninput="liveUpdate()">
+          <div class="date-input-wrap">
+            <input type="text" id="cc-minutes-date" placeholder="e.g. 24 January 2025" oninput="liveUpdate()">
+            <button type="button" class="btn-cal" onclick="toggleCal('cal-cc-minutes-date')" title="Pick date">📅</button>
+            <div id="cal-cc-minutes-date" class="cal-popup hidden"></div>
+          </div>
         </div>
       </div>
 
@@ -3224,7 +3360,7 @@
       <div class="cover-subtitle">For the year ended ${yearEnd}</div>
     </div>
 
-    <h2 style="font-family:'Libre Baskerville',serif;font-size:10pt;text-align:center;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 16px;font-weight:700;">General Information</h2>
+    <h2 style="font-family:'Libre Baskerville',serif;font-size:10pt;text-align:left;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 16px;font-weight:700;">General Information</h2>
 
     <table class="cover-info-table">
       <tr>
@@ -4985,6 +5121,157 @@
       // Reset so the same file can be re-imported
       input.value = '';
     }
+
+    // ── CALENDAR PICKER ────────────────────────────────────────────────────────
+
+    // Map: calPopupId → { inputId, format }
+    const CAL_CONFIG = {
+      'cal-yearEnd':        { inputId: 'yearEnd',        format: 'long',    onpick: () => { autoFillPrevYear(); liveUpdate(); } },
+      'cal-prevYearEnd':    { inputId: 'prevYearEnd',    format: 'long',    onpick: () => liveUpdate() },
+      'cal-dateApproved':   { inputId: 'dateApproved',   format: 'long',    onpick: () => liveUpdate() },
+      'cal-dateSigned':     { inputId: 'dateSigned',     format: 'dotted',  onpick: () => liveUpdate() },
+      'cal-dateOfIssue':    { inputId: 'dateOfIssue',    format: 'long',    onpick: () => liveUpdate() },
+      'cal-bcAGMDate':      { inputId: 'bcAGMDate',      format: 'long',    onpick: () => liveUpdate() },
+      'cal-trustAGMDate':   { inputId: 'trustAGMDate',   format: 'long',    onpick: () => liveUpdate() },
+      'cal-minutes-date':   { inputId: 'minutes-date',   format: 'long',    onpick: () => liveUpdate() },
+      'cal-cc-minutes-date':{ inputId: 'cc-minutes-date',format: 'long',    onpick: () => liveUpdate() },
+    };
+
+    const CAL_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const CAL_DAYS   = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+
+    // Track open calendar state
+    let _calOpen = null; // current open cal id
+    let _calState = {}; // calId → { year, month }
+
+    function formatCalDate(d, format) {
+      if (format === 'dotted') {
+        const yy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        return `${yy}.${mm}.${dd}`;
+      }
+      // long: "19 January 2025"
+      return `${d.getDate()} ${CAL_MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+    }
+
+    function renderCal(calId) {
+      const cfg = CAL_CONFIG[calId];
+      if (!cfg) return;
+      const popup = document.getElementById(calId);
+      if (!popup) return;
+
+      if (!_calState[calId]) {
+        // Seed from existing input value if parseable
+        const input = document.getElementById(cfg.inputId);
+        const existing = (input && input.value) ? parseCalDate(input.value) : null;
+        const seed = existing || new Date();
+        _calState[calId] = { year: seed.getFullYear(), month: seed.getMonth() };
+      }
+
+      const { year, month } = _calState[calId];
+      const today = new Date();
+      const inputEl = document.getElementById(cfg.inputId);
+      const selectedDate = inputEl && inputEl.value ? parseCalDate(inputEl.value) : null;
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      let cells = '';
+      // Day-of-week headers
+      CAL_DAYS.forEach(d => { cells += `<div class="cal-dow">${d}</div>`; });
+      // Empty leading cells
+      for (let i = 0; i < firstDay; i++) cells += `<div class="cal-day empty"></div>`;
+      // Day cells
+      for (let day = 1; day <= daysInMonth; day++) {
+        const isToday = (today.getFullYear() === year && today.getMonth() === month && today.getDate() === day);
+        const isSel   = selectedDate && (selectedDate.getFullYear() === year && selectedDate.getMonth() === month && selectedDate.getDate() === day);
+        let cls = 'cal-day';
+        if (isToday) cls += ' today';
+        if (isSel)   cls += ' selected';
+        cells += `<div class="${cls}" onclick="pickDate('${calId}',${year},${month},${day})">${day}</div>`;
+      }
+
+      popup.innerHTML = `
+        <div class="cal-nav">
+          <button type="button" onclick="calNav('${calId}',-1)">&#8249;</button>
+          <span class="cal-month-label">${CAL_MONTHS[month]} ${year}</span>
+          <button type="button" onclick="calNav('${calId}',1)">&#8250;</button>
+        </div>
+        <div class="cal-grid">${cells}</div>`;
+    }
+
+    function parseCalDate(str) {
+      if (!str) return null;
+      // Try "28 February 2025"
+      const m1 = str.match(/^(\d{1,2})\s+(\w+)\s+(\d{4})$/);
+      if (m1) {
+        const mo = CAL_MONTHS.indexOf(m1[2]);
+        if (mo >= 0) return new Date(parseInt(m1[3]), mo, parseInt(m1[1]));
+      }
+      // Try "2025.01.19"
+      const m2 = str.match(/^(\d{4})\.(\d{2})\.(\d{2})$/);
+      if (m2) return new Date(parseInt(m2[1]), parseInt(m2[2])-1, parseInt(m2[3]));
+      // Fallback
+      const d = new Date(str);
+      return isNaN(d) ? null : d;
+    }
+
+    function toggleCal(calId) {
+      // Close any open calendar first
+      if (_calOpen && _calOpen !== calId) {
+        const prev = document.getElementById(_calOpen);
+        if (prev) prev.classList.add('hidden');
+        _calOpen = null;
+      }
+      const popup = document.getElementById(calId);
+      if (!popup) return;
+      if (popup.classList.contains('hidden')) {
+        renderCal(calId);
+        popup.classList.remove('hidden');
+        _calOpen = calId;
+      } else {
+        popup.classList.add('hidden');
+        _calOpen = null;
+      }
+    }
+
+    function calNav(calId, dir) {
+      if (!_calState[calId]) _calState[calId] = { year: new Date().getFullYear(), month: new Date().getMonth() };
+      let { year, month } = _calState[calId];
+      month += dir;
+      if (month < 0)  { month = 11; year--; }
+      if (month > 11) { month = 0;  year++; }
+      _calState[calId] = { year, month };
+      renderCal(calId);
+    }
+
+    function pickDate(calId, year, month, day) {
+      const cfg = CAL_CONFIG[calId];
+      if (!cfg) return;
+      const d = new Date(year, month, day);
+      const formatted = formatCalDate(d, cfg.format);
+      const input = document.getElementById(cfg.inputId);
+      if (input) {
+        input.value = formatted;
+        input.dispatchEvent(new Event('input'));
+      }
+      const popup = document.getElementById(calId);
+      if (popup) popup.classList.add('hidden');
+      _calOpen = null;
+      if (cfg.onpick) cfg.onpick();
+    }
+
+    // Close calendar when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!_calOpen) return;
+      const popup = document.getElementById(_calOpen);
+      if (!popup) return;
+      if (!popup.contains(e.target) && !e.target.classList.contains('btn-cal')) {
+        popup.classList.add('hidden');
+        _calOpen = null;
+      }
+    });
 
   </script>
 </body>
