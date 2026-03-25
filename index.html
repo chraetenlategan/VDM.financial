@@ -103,7 +103,7 @@
       <hr class="form-divider">
 
       <!-- ══════════════ EXCEL IMPORT ══════════════ -->
-      <div style="background:linear-gradient(135deg,#f8f5ee 0%,#faf8f3 100%);border:1.5px dashed var(--gold);border-radius:10px;padding:18px 22px;margin-bottom:22px;text-align:center;">
+      <div class="import-box">
         <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">Import from SecInfo</div>
         <p style="font-size:13px;color:var(--ink-light);margin-bottom:12px;">Upload a SecInfo <strong>.xlsx</strong> file to auto-fill company details, directors, and shareholders.</p>
         <label for="xlsx-import" style="display:inline-block;padding:10px 28px;background:var(--gold);color:#fff;border-radius:7px;cursor:pointer;font-weight:600;font-size:13px;letter-spacing:0.03em;transition:background .2s;">
@@ -124,7 +124,7 @@
       <div class="field-group" id="att-reg-toggle-group" style="display:none;">
         <label style="font-size:13px;font-weight:600;color:var(--ink);">Does the firm have a registration
           number?</label>
-        <div class="options-group" style="margin-top:4px;">
+        <div class="options-group" style="margin-top:4px;flex-direction:row;flex-wrap:wrap;">
           <label class="option-pill"><input type="radio" name="attHasReg" value="yes" checked
               onchange="toggleAttReg(); liveUpdate()"> Yes</label>
           <label class="option-pill"><input type="radio" name="attHasReg" value="no"
@@ -643,7 +643,7 @@
 
         <div class="field-group">
           <label>Current Year — Profit or Loss?</label>
-          <div class="options-group" style="margin-bottom:8px;">
+          <div class="options-group" style="margin-bottom:8px;flex-direction:row;flex-wrap:wrap;">
             <label class="option-pill">
               <input type="radio" name="plType" value="profit" checked onchange="liveUpdate()"> Profit
             </label>
@@ -656,7 +656,7 @@
         </div>
         <div class="field-group">
           <label>Previous Year — Profit or Loss?</label>
-          <div class="options-group" style="margin-bottom:8px;">
+          <div class="options-group" style="margin-bottom:8px;flex-direction:row;flex-wrap:wrap;">
             <label class="option-pill">
               <input type="radio" name="prevPlType" value="profit" checked onchange="liveUpdate()"> Profit
             </label>
@@ -744,7 +744,7 @@
 
         <div class="field-group">
           <label>Contributions Result — Current Year</label>
-          <div class="options-group" style="margin-bottom:8px;">
+          <div class="options-group" style="margin-bottom:8px;flex-direction:row;flex-wrap:wrap;">
             <label class="option-pill">
               <input type="radio" name="bcContribType" value="surplus" checked onchange="liveUpdate()"> Levy Surplus
             </label>
@@ -763,7 +763,7 @@
 
         <div class="field-group">
           <label>Contributions Result — Previous Year</label>
-          <div class="options-group" style="margin-bottom:8px;">
+          <div class="options-group" style="margin-bottom:8px;flex-direction:row;flex-wrap:wrap;">
             <label class="option-pill">
               <input type="radio" name="bcPrevContribType" value="surplus" checked onchange="liveUpdate()"> Levy Surplus
             </label>
