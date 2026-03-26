@@ -45,7 +45,6 @@
       <span id="toggle-label">Show Preview</span>
     </button>
   </div>
-  </div><!-- /sticky-header-area -->
 
   <div class="app form-only" id="app-container">
 
@@ -123,57 +122,63 @@
       <div class="step-label">Step 2</div>
       <div class="section-title">General Information</div>
 
-      <div class="field-group">
-        <label id="label-entityName">Company Name (as it appears on documents)</label>
-        <input type="text" id="companyName" placeholder="e.g. Aruba 33 (Proprietary) Limited" oninput="liveUpdate()">
-      </div>
-
-      <div class="field-group" id="att-reg-toggle-group" style="display:none;">
-        <label style="font-size:13px;font-weight:600;color:var(--ink);">Does the firm have a registration
-          number?</label>
-        <div class="options-group" style="margin-top:4px;flex-direction:row;flex-wrap:wrap;">
-          <label class="option-pill"><input type="radio" name="attHasReg" value="yes" checked
-              onchange="toggleAttReg(); liveUpdate()"> Yes</label>
-          <label class="option-pill"><input type="radio" name="attHasReg" value="no"
-              onchange="toggleAttReg(); liveUpdate()"> No</label>
+      <div class="form-grid">
+        <!-- Row 1: Company Name — full width -->
+        <div class="field-group form-grid-full">
+          <label id="label-entityName">Company Name (as it appears on documents)</label>
+          <input type="text" id="companyName" placeholder="e.g. Aruba 33 (Proprietary) Limited" oninput="liveUpdate()">
         </div>
-      </div>
 
-      <div class="field-group" id="reg-number-group">
-        <label id="label-regNumber">Registration Number</label>
-        <input type="text" id="regNumber" placeholder="e.g. 2002/002880/07" oninput="liveUpdate()">
-      </div>
-
-      <div class="field-group">
-        <label>Financial Year End</label>
-        <div class="date-input-wrap">
-          <input type="text" id="yearEnd" placeholder="e.g. 28 February 2025"
-            oninput="autoFillPrevYear(); liveUpdate()">
-          <button type="button" class="btn-cal" onclick="toggleCal('cal-yearEnd')" title="Pick date">&#x1f4c5;</button>
-          <div id="cal-yearEnd" class="cal-popup hidden"></div>
+        <!-- Attorneys reg toggle — full width, hidden by default -->
+        <div class="field-group form-grid-full" id="att-reg-toggle-group" style="display:none;">
+          <label style="font-size:13px;font-weight:600;color:var(--ink);">Does the firm have a registration
+            number?</label>
+          <div class="options-group" style="margin-top:4px;flex-direction:row;flex-wrap:wrap;">
+            <label class="option-pill"><input type="radio" name="attHasReg" value="yes" checked
+                onchange="toggleAttReg(); liveUpdate()"> Yes</label>
+            <label class="option-pill"><input type="radio" name="attHasReg" value="no"
+                onchange="toggleAttReg(); liveUpdate()"> No</label>
+          </div>
         </div>
-      </div>
 
-      <div class="field-group">
-        <label>Previous Year End <span style="font-weight:400;color:#9090b0;font-size:11px;">(auto-filled from year
-            end)</span></label>
-        <div class="date-input-wrap">
-          <input type="text" id="prevYearEnd" placeholder="Auto-filled when year end is entered" oninput="liveUpdate()"
-            style="background:#f9f7f2;">
-          <button type="button" class="btn-cal" onclick="toggleCal('cal-prevYearEnd')"
-            title="Pick date">&#x1f4c5;</button>
-          <div id="cal-prevYearEnd" class="cal-popup hidden"></div>
+        <!-- Row 2: Registration Number + Financial Year End -->
+        <div class="field-group" id="reg-number-group">
+          <label id="label-regNumber">Registration Number</label>
+          <input type="text" id="regNumber" placeholder="e.g. 2002/002880/07" oninput="liveUpdate()">
         </div>
-      </div>
 
-      <div class="field-group">
-        <label>Nature of Business</label>
-        <input type="text" id="natureBusiness" placeholder="e.g. rental of property" oninput="liveUpdate()">
-      </div>
+        <div class="field-group">
+          <label>Financial Year End</label>
+          <div class="date-input-wrap">
+            <input type="text" id="yearEnd" placeholder="e.g. 28 February 2025"
+              oninput="autoFillPrevYear(); liveUpdate()">
+            <button type="button" class="btn-cal" onclick="toggleCal('cal-yearEnd')" title="Pick date">&#x1f4c5;</button>
+            <div id="cal-yearEnd" class="cal-popup hidden"></div>
+          </div>
+        </div>
 
-      <div class="field-group">
-        <label>Main Source of Income</label>
-        <input type="text" id="mainIncome" placeholder="e.g. rent received" oninput="liveUpdate()">
+        <!-- Row 3: Previous Year End + Nature of Business -->
+        <div class="field-group">
+          <label>Previous Year End <span style="font-weight:400;color:#9090b0;font-size:11px;">(auto-filled)</span></label>
+          <div class="date-input-wrap">
+            <input type="text" id="prevYearEnd" placeholder="Auto-filled from year end" oninput="liveUpdate()"
+              style="background:#f9f7f2;">
+            <button type="button" class="btn-cal" onclick="toggleCal('cal-prevYearEnd')"
+              title="Pick date">&#x1f4c5;</button>
+            <div id="cal-prevYearEnd" class="cal-popup hidden"></div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>Nature of Business</label>
+          <input type="text" id="natureBusiness" placeholder="e.g. rental of property" oninput="liveUpdate()">
+        </div>
+
+        <!-- Row 4: Main Source of Income — full width -->
+        <div class="field-group form-grid-full">
+          <label>Main Source of Income</label>
+          <input type="text" id="mainIncome" placeholder="e.g. rent received" oninput="liveUpdate()">
+        </div>
       </div>
 
       <hr class="form-divider">

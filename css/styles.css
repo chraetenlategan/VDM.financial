@@ -4,36 +4,36 @@
 
 :root {
   /* Core palette */
-  --ink:          #1a1a2e;
-  --ink-mid:      #252540;
-  --ink-light:    #4a4a6a;
-  --ink-muted:    #7a7a9a;
-  --gold:         #c9a84c;
-  --gold-dark:    #a8882e;
-  --gold-light:   #e8d080;
-  --gold-pale:    #fffbf0;
-  --gold-faint:   #fdf8ec;
-  --cream:        #faf8f3;
-  --cream-dark:   #f2ede3;
-  --white:        #ffffff;
-  --border:       #e2ddd3;
+  --ink: #1a1a2e;
+  --ink-mid: #252540;
+  --ink-light: #4a4a6a;
+  --ink-muted: #7a7a9a;
+  --gold: #c9a84c;
+  --gold-dark: #a8882e;
+  --gold-light: #e8d080;
+  --gold-pale: #fffbf0;
+  --gold-faint: #fdf8ec;
+  --cream: #faf8f3;
+  --cream-dark: #f2ede3;
+  --white: #ffffff;
+  --border: #e2ddd3;
   --border-light: #ede9e0;
-  --success:      #2d7a4f;
+  --success: #2d7a4f;
   --success-pale: #edf7f1;
-  --panel:        #f4f1ea;
-  --error:        #c0392b;
+  --panel: #f4f1ea;
+  --error: #c0392b;
 
   /* Shadows */
-  --shadow-xs: 0 1px 2px rgba(0,0,0,0.06);
-  --shadow-sm: 0 2px 6px rgba(0,0,0,0.08);
-  --shadow-md: 0 4px 18px rgba(0,0,0,0.10);
-  --shadow-lg: 0 8px 32px rgba(0,0,0,0.14);
-  --shadow-gold: 0 0 0 3px rgba(201,168,76,0.18);
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 18px rgba(0, 0, 0, 0.10);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.14);
+  --shadow-gold: 0 0 0 3px rgba(201, 168, 76, 0.18);
 
   /* Layout */
   --radius-xs: 4px;
   --radius-sm: 6px;
-  --radius:    8px;
+  --radius: 8px;
   --radius-lg: 12px;
   --radius-xl: 16px;
 
@@ -44,7 +44,9 @@
 }
 
 /* ── RESET ── */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -135,7 +137,7 @@ header p {
   gap: 7px;
   padding: 6px 16px;
   background: transparent;
-  border: 1.5px solid rgba(201,168,76,0.7);
+  border: 1.5px solid rgba(201, 168, 76, 0.7);
   border-radius: 20px;
   color: var(--gold);
   font-family: 'Poppins', sans-serif;
@@ -149,7 +151,7 @@ header p {
 }
 
 .btn-toggle-preview:hover {
-  background: rgba(201,168,76,0.12);
+  background: rgba(201, 168, 76, 0.12);
   border-color: var(--gold);
 }
 
@@ -286,6 +288,23 @@ header p {
   height: 2px;
   background: var(--gold);
   opacity: 0.5;
+}
+
+/* ── FORM GRID (2-column layout) ── */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 18px;
+}
+
+.form-grid-full {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 600px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ── FIELD GROUPS ── */
@@ -804,7 +823,7 @@ header p {
 
 .btn-print:hover {
   background: #1f5c3a;
-  box-shadow: 0 2px 10px rgba(45,122,79,0.35);
+  box-shadow: 0 2px 10px rgba(45, 122, 79, 0.35);
 }
 
 .btn-print.visible {
@@ -950,13 +969,11 @@ header p {
 .preview-panel {
   background: #e8e5dd;
   background-image:
-    repeating-linear-gradient(
-      0deg,
+    repeating-linear-gradient(0deg,
       transparent,
       transparent 27px,
-      rgba(0,0,0,0.025) 27px,
-      rgba(0,0,0,0.025) 28px
-    );
+      rgba(0, 0, 0, 0.025) 27px,
+      rgba(0, 0, 0, 0.025) 28px);
   padding: 36px 32px;
   overflow-y: auto;
   scrollbar-width: thin;
@@ -1010,7 +1027,7 @@ header p {
   max-width: 740px;
   margin: 0 auto 32px;
   padding: 52px 64px 60px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.1), 0 8px 32px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1), 0 8px 32px rgba(0, 0, 0, 0.08);
   font-family: 'Poppins', sans-serif;
   font-size: 9.5pt;
   line-height: 1.55;
@@ -1023,11 +1040,12 @@ header p {
 }
 
 .letterhead-img {
-  width: 100%;
+  width: calc(100% + 128px);
+  margin-left: -64px;
+  margin-top: -52px;
   display: block;
   margin-bottom: 18px;
-  max-height: 160px;
-  object-fit: cover;
+  object-fit: contain;
   object-position: top center;
 }
 
@@ -1138,7 +1156,7 @@ header p {
   max-width: 740px;
   margin: 0 auto 32px;
   padding: 52px 64px 60px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.1), 0 8px 32px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1), 0 8px 32px rgba(0, 0, 0, 0.08);
   font-family: 'Poppins', sans-serif;
   font-size: 9.5pt;
   line-height: 1.55;
@@ -1147,13 +1165,12 @@ header p {
   min-height: 1100px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
 }
 
 .cover-title-block {
   text-align: left;
-  margin-bottom: 36px;
-  padding-bottom: 20px;
+  margin-bottom: 0;
+  padding-bottom: 14px;
   border-bottom: 2px solid #111;
 }
 
@@ -1162,48 +1179,73 @@ header p {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .cover-title-block .co-reg {
   font-size: 10pt;
   font-style: italic;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .cover-title-block .cover-year {
   font-size: 11pt;
   font-weight: 700;
   letter-spacing: 0.04em;
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
 .cover-title-block .cover-subtitle {
   font-size: 10pt;
-  margin-top: 4px;
+  margin-top: 2px;
   letter-spacing: 0.03em;
+}
+
+.cover-info-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.cover-section-heading {
+  font-family: 'Poppins', sans-serif;
+  font-size: 10pt;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0 0 8px;
+  font-weight: 700;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #ccc;
 }
 
 .cover-info-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 9pt;
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
 .cover-info-table tr {
+  border-bottom: 1px solid #eee;
+}
+
+.cover-info-table tr:last-child {
   border-bottom: none;
 }
 
 .cover-info-table td {
-  padding: 7px 4px;
+  padding: 8px 4px;
   vertical-align: top;
+  line-height: 1.45;
 }
 
 .cover-info-table td:first-child {
   font-weight: 700;
-  width: 46%;
+  width: 42%;
   color: #222;
+  white-space: nowrap;
 }
 
 .cover-info-table td:last-child {
@@ -1221,12 +1263,16 @@ header p {
 
 .letterhead-footer {
   margin-top: auto;
-  padding-top: 12px;
-  border-top: 1px solid #bbb;
-  font-size: 7.5pt;
-  color: #555;
   text-align: center;
-  line-height: 1.5;
+}
+
+.letterhead-footer-img {
+  width: calc(100% + 128px);
+  margin-left: -64px;
+  margin-bottom: -60px;
+  display: block;
+  object-fit: contain;
+  object-position: bottom center;
 }
 
 /* ══════════════════════════════
@@ -1253,11 +1299,27 @@ header p {
   background: #fffbe6;
 }
 
+/* ── Calendar popup — visibility fix ── */
+.cal-popup {
+  display: block;
+  /* ensure visible state is explicit */
+}
+
+/* ── Prevent calendar being clipped by scrolling panels ── */
+.app.split-view .form-panel {
+  overflow-x: visible;
+}
+
+.date-input-wrap {
+  overflow: visible;
+}
+
 /* ══════════════════════════════
    PRINT STYLES
    ══════════════════════════════ */
 
 @media print {
+
   header,
   .form-panel,
   .preview-placeholder,
@@ -1342,6 +1404,18 @@ header p {
 
   .page-number {
     display: none;
+  }
+
+  .letterhead-img {
+    width: calc(100% + 40mm) !important;
+    margin-left: -20mm !important;
+    margin-top: -18mm !important;
+  }
+
+  .letterhead-footer-img {
+    width: calc(100% + 40mm) !important;
+    margin-left: -20mm !important;
+    margin-bottom: -16mm !important;
   }
 
   #document-output {

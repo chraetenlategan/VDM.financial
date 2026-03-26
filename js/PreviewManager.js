@@ -139,6 +139,18 @@ class PreviewManager {
       justify-content: space-between !important;
     }
     .page-number { display: none; }
+    .letterhead-img {
+      width: calc(100% + 40mm) !important;
+      margin-left: -20mm !important;
+      margin-top: -18mm !important;
+      object-fit: contain !important;
+    }
+    .letterhead-footer-img {
+      width: calc(100% + 40mm) !important;
+      margin-left: -20mm !important;
+      margin-bottom: -20mm !important;
+      object-fit: contain !important;
+    }
     @page { margin: 0; size: A4; }
   </style>
 </head>

@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(awk 'NR>=7 && NR<=12' \"C:/Users/chrae/Downloads/v2/js/config.js\")",
+      "Bash(awk 'NR==5' \"C:/Users/chrae/Downloads/v2/js/config.js\")",
+      "Bash(awk 'NR==6' \"C:/Users/chrae/Downloads/v2/js/config.js\")",
+      "Bash(awk 'NR<=4' \"C:/Users/chrae/Downloads/v2/js/config.js\")",
+      "Bash(echo 'const CA_LETTERHEAD = \"\"images/letterhead-header..png\"\";')",
+      "Bash(echo 'const AUDIT_LETTERHEAD = \"\"images/letterhead-header..png\"\";')",
+      "Bash(echo 'const LETTERHEAD_FOOTER_IMG = \"\"images/letterhead-footer.png\"\";')",
+      "Bash(awk 'NR>=7' \"C:/Users/chrae/Downloads/v2/js/config.js\")",
+      "mcp__Claude_Preview__preview_start"
+    ]
+  }
+}

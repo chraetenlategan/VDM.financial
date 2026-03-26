@@ -146,9 +146,7 @@ class DocumentGenerator {
   function caLetterhead() { return `<img class="letterhead-img" src="${CA_LETTERHEAD}"    alt="VDM Chartered Accountants">`; }
   function auditLetterhead() { return `<img class="letterhead-img" src="${AUDIT_LETTERHEAD}" alt="VDM Audit">`; }
   function letterheadFooter() { return `<div class="letterhead-footer">
-    DIE VAN DER MERWE'S INGELYF / INCORPORATED<br>
-    Reg nr / no: 1999 / 010890 / 21 &nbsp;&middot;&nbsp; BTW nr / VAT no: 4300209477<br>
-    Kantore te / Offices at Standerton, Newcastle, Secunda &amp; Middelburg
+    <img class="letterhead-footer-img" src="${LETTERHEAD_FOOTER_IMG}" alt="VDM Footer">
   </div>`; }
 
   // Compiler block helper
@@ -221,7 +219,8 @@ class DocumentGenerator {
   <div class="cover-subtitle">For the year ended ${yearEnd}</div>
 </div>
 
-<h2 style="font-family:'Poppins',sans-serif;font-size:10pt;text-align:left;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 16px;font-weight:700;">General Information</h2>
+<div class="cover-info-section">
+<h2 class="cover-section-heading">General Information</h2>
 
 <table class="cover-info-table">
   <tr>
@@ -269,7 +268,7 @@ class DocumentGenerator {
     <td>${dateOfIssue}</td>
   </tr>
 </table>
-
+</div>
   </div>`;
 
   // ── PAGE 1: CA DECLARATION ──
