@@ -1172,6 +1172,7 @@ header p {
   margin-bottom: 0;
   padding-bottom: 14px;
   border-bottom: 2px solid #111;
+  flex-shrink: 0;
 }
 
 .cover-title-block .co-name {
@@ -1202,7 +1203,10 @@ header p {
 }
 
 .cover-info-section {
-  margin-top: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-top: 16px;
 }
 
 .cover-section-heading {
@@ -1215,6 +1219,7 @@ header p {
   font-weight: 700;
   padding-bottom: 6px;
   border-bottom: 1px solid #ccc;
+  flex-shrink: 0;
 }
 
 .cover-info-table {
@@ -1222,6 +1227,7 @@ header p {
   border-collapse: collapse;
   font-size: 9pt;
   margin-top: 4px;
+  flex: 1;
 }
 
 .cover-info-table tr {
@@ -1233,8 +1239,8 @@ header p {
 }
 
 .cover-info-table td {
-  padding: 8px 4px;
-  vertical-align: top;
+  padding: 12px 4px;
+  vertical-align: middle;
   line-height: 1.45;
 }
 
