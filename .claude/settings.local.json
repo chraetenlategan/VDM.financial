@@ -9,7 +9,10 @@
       "Bash(echo 'const AUDIT_LETTERHEAD = \"\"images/letterhead-header..png\"\";')",
       "Bash(echo 'const LETTERHEAD_FOOTER_IMG = \"\"images/letterhead-footer.png\"\";')",
       "Bash(awk 'NR>=7' \"C:/Users/chrae/Downloads/v2/js/config.js\")",
-      "mcp__Claude_Preview__preview_start"
+      "mcp__Claude_Preview__preview_start",
+      "Read(//c/Users/chrae/Downloads/**)",
+      "Bash(ls -la \"SecInfo \\(1\\).xlsx\")",
+      "Bash(python3 -c \":*)"
     ]
   }
 }

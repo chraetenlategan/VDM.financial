@@ -78,8 +78,10 @@ class DocumentGenerator {
   const entityType = currentEntityType || 'company';
   const reportType = getRadio('reportType') || 'compilation';
 
-  // Registration number — optional for attorneys
-  const hasReg = entityType !== 'attorneys' || getRadio('attHasReg') === 'yes';
+  // Registration number — optional for attorneys and clubs
+  const hasReg = entityType === 'attorneys' ? getRadio('attHasReg') === 'yes'
+               : entityType === 'club' ? !!getVal('regNumber')
+               : true;
   const reg = hasReg ? (getVal('regNumber') || '[REGISTRATION NUMBER]') : '';
   const regLine = reg ? `<div class="co-reg">(Registration Number ${reg})</div>` : '';
   const regLineItalic = reg ? `<p><em>(Registration Number ${reg})</em></p>` : '';
@@ -203,9 +205,10 @@ class DocumentGenerator {
   }
 
   // Director rows for cover page (Initials Surname – ID if provided)
+  // For clubs, hide the members row entirely if none were added
   const directorCoverRows = dirs.length
     ? dirs.map(d => d.idNo ? `${d.full} – ${d.idNo}` : d.full).join('<br>')
-    : '[DIRECTOR NAMES]';
+    : (entityType === 'club' ? '' : '[DIRECTOR NAMES]');
 
   // ── PAGE 0: COVER PAGE ──
   const coverPage = `
@@ -233,10 +236,10 @@ class DocumentGenerator {
     <td>Nature of Business and Principal Activities</td>
     <td>${nature}</td>
   </tr>
-  <tr>
+  ${directorCoverRows ? `<tr>
     <td>${pluralTerm}</td>
     <td>${directorCoverRows}</td>
-  </tr>
+  </tr>` : ''}
   <tr>
     <td>Registered Office</td>
     <td>${regAddr}</td>
