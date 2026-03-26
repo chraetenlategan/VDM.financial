@@ -154,7 +154,6 @@ class DocumentGenerator {
     return `<div class="compiler-block">
   <p>${signer}</p>
   <p>CHARTERED ACCOUNTANT (SA)</p>
-  <p>STANDERTON</p>
   <p>${date}</p>
 </div>`;
   }
@@ -164,7 +163,6 @@ class DocumentGenerator {
     return `<div class="compiler-block">
   <p>${signer}</p>
   <p>REGISTERED AUDITOR (SA)</p>
-  <p>STANDERTON</p>
   <p>${date}</p>
 </div>`;
   }
