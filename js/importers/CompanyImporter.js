@@ -9,16 +9,16 @@ class CompanyImporter {
    * @param {Object}   em       - EntityManager instance
    */
   static extract(cell, fmtAddr, setField, em) {
-    // ── Entity name (row 8, col H) ──
-    const entityName = cell('H8') || '';
+    // ── Entity name (row 8, col I) ──
+    const entityName = cell('I8') || '';
     setField('companyName', entityName);
 
-    // ── Registration number (row 13, col AA) ──
-    const regNo = cell('AA13') || '';
+    // ── Registration number (row 12, col AB) ──
+    const regNo = cell('AB12') || '';
     setField('regNumber', regNo);
 
-    // ── Year end (row 26, col AA) ──
-    const yearEndStr = cell('AA26') || '';
+    // ── Year end (row 25, col AB) ──
+    const yearEndStr = cell('AB25') || '';
     setField('yearEnd', yearEndStr);
     if (yearEndStr) {
       const m = yearEndStr.match(/(\d{1,2})\s+(\w+)\s+(\d{4})/);
@@ -31,13 +31,13 @@ class CompanyImporter {
       setField('natureBusiness', mainObj.toLowerCase());
     }
 
-    // ── Addresses (row 21 = data, row 20 = headers) ──
-    setField('postalAddress', fmtAddr(cell('C21')));
-    setField('regAddress', fmtAddr(cell('H21')));
-    setField('businessAddress', fmtAddr(cell('W21')));
+    // ── Addresses (row 20 = data, row 19 = headers) ──
+    setField('postalAddress', fmtAddr(cell('E20')));
+    setField('regAddress', fmtAddr(cell('I20')));
+    setField('businessAddress', fmtAddr(cell('X20')));
 
-    // ── Partner → VDM Signatory (row 10, col AA) ──
-    CompanyImporter._mapSigner(cell('AA10'), setField);
+    // ── Partner → VDM Signatory (row 9, col AB) ──
+    CompanyImporter._mapSigner(cell('AB9'), setField);
 
     // ── Select entity type ──
     const ecCard = document.getElementById('ec-company');
@@ -48,10 +48,10 @@ class CompanyImporter {
     em.directors = [];
     em.directorCount = 0;
 
-    // Find DIRECTORS header row dynamically
+    // Find DIRECTORS header row dynamically (col F)
     let dirHeaderRow = 0;
     for (let r = 40; r <= 70; r++) {
-      const val = cell('D' + r);
+      const val = cell('F' + r);
       if (val && /^DIRECTORS$/i.test(val.trim())) {
         dirHeaderRow = r;
         break;
@@ -62,12 +62,12 @@ class CompanyImporter {
     if (dirHeaderRow) {
       let dataRow = dirHeaderRow + 2; // skip column headers
       while (dataRow < dirHeaderRow + 20) {
-        const name = cell('D' + dataRow);
+        const name = cell('F' + dataRow);
         if (!name || /^SHAREHOLDERS$/i.test(name.trim())) break;
         const parts = name.replace(/^(MR|MRS|MS|MISS|DR|PROF|ADV|ME|MNR)\s+/i, '').trim().split(/\s+/);
         const surname = parts.pop() || '';
         const initials = parts.map(p => p.charAt(0).toUpperCase()).join('');
-        const idNo = cell('L' + dataRow) || '';
+        const idNo = cell('S' + dataRow) || '';
 
         em.addDirector();
         const idx = em.directorCount;
@@ -95,9 +95,14 @@ class CompanyImporter {
 
     if (shHeaderRow) {
       let shRow = shHeaderRow + 2;
-      while (shRow < shHeaderRow + 20) {
+      while (shRow < shHeaderRow + 30) {
         const shName = cell('C' + shRow) || cell('D' + shRow);
         if (!shName) break;
+        // Skip share class headers like "ORDINARY SHARE ()" and total rows
+        if (/^(ORDINARY|PREFERENCE)\s+SHARE/i.test(shName.trim()) || /^\d+$/.test(shName.trim())) {
+          shRow++;
+          continue;
+        }
         em.addShareholder();
         const idx = em.shareholderCount;
         setField(`sh-name-${idx}`, toTitleCase(shName));
@@ -114,8 +119,8 @@ class CompanyImporter {
     if (entityName) imported.push('company name');
     if (regNo) imported.push('reg number');
     if (yearEndStr) imported.push('year end');
-    if (fmtAddr(cell('C21'))) imported.push('postal address');
-    if (fmtAddr(cell('H21'))) imported.push('registered address');
+    if (fmtAddr(cell('E20'))) imported.push('postal address');
+    if (fmtAddr(cell('I20'))) imported.push('registered address');
     if (dirsImported > 0) imported.push(dirsImported + ' director(s)');
     if (em.shareholderCount > 0) imported.push(em.shareholderCount + ' shareholder(s)');
     return imported;

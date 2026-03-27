@@ -2,24 +2,24 @@
 
 class BodyCorporateImporter {
   static extract(cell, fmtAddr, setField, em) {
-    const entityName = cell('H8') || '';
+    const entityName = cell('I8') || '';
     setField('companyName', entityName);
 
-    const regNo = cell('AA13') || '';
+    const regNo = cell('AB12') || '';
     setField('regNumber', regNo);
 
-    const yearEndStr = cell('AA26') || '';
+    const yearEndStr = cell('AB25') || '';
     setField('yearEnd', yearEndStr);
     if (yearEndStr) {
       const m = yearEndStr.match(/(\d{1,2})\s+(\w+)\s+(\d{4})/);
       if (m) setField('prevYearEnd', `${m[1]} ${m[2]} ${parseInt(m[3]) - 1}`);
     }
 
-    setField('postalAddress', fmtAddr(cell('C21')));
-    setField('regAddress', fmtAddr(cell('H21')));
-    setField('businessAddress', fmtAddr(cell('W21')));
+    setField('postalAddress', fmtAddr(cell('E20')));
+    setField('regAddress', fmtAddr(cell('I20')));
+    setField('businessAddress', fmtAddr(cell('X20')));
 
-    BodyCorporateImporter._mapSigner(cell('AA10'), setField);
+    BodyCorporateImporter._mapSigner(cell('AB9'), setField);
 
     const ecCard = document.getElementById('ec-bc');
     if (ecCard) em.selectEntity(ecCard, 'bc');
@@ -31,7 +31,7 @@ class BodyCorporateImporter {
 
     let headerRow = 0;
     for (let r = 40; r <= 70; r++) {
-      const val = cell('D' + r);
+      const val = cell('F' + r);
       if (val && /^TRUSTEES$/i.test(val.trim())) {
         headerRow = r;
         break;
@@ -42,12 +42,12 @@ class BodyCorporateImporter {
     if (headerRow) {
       let dataRow = headerRow + 2;
       while (dataRow < headerRow + 20) {
-        const name = cell('D' + dataRow);
+        const name = cell('F' + dataRow);
         if (!name) break;
         const parts = name.replace(/^(MR|MRS|MS|MISS|DR|PROF|ADV|ME|MNR)\s+/i, '').trim().split(/\s+/);
         const surname = parts.pop() || '';
         const initials = parts.map(p => p.charAt(0).toUpperCase()).join('');
-        const idNo = cell('L' + dataRow) || '';
+        const idNo = cell('S' + dataRow) || '';
 
         em.addDirector();
         const idx = em.directorCount;
@@ -63,8 +63,8 @@ class BodyCorporateImporter {
     if (entityName) imported.push('body corporate name');
     if (regNo) imported.push('scheme number');
     if (yearEndStr) imported.push('year end');
-    if (fmtAddr(cell('C21'))) imported.push('postal address');
-    if (fmtAddr(cell('H21'))) imported.push('registered address');
+    if (fmtAddr(cell('E20'))) imported.push('postal address');
+    if (fmtAddr(cell('I20'))) imported.push('registered address');
     if (trusteesImported > 0) imported.push(trusteesImported + ' trustee(s)');
     return imported;
   }

@@ -44,12 +44,15 @@ class ExcelImporter {
         }
 
         // ── Detect entity type from the entity name ──
-        // Try multiple common name cell locations
-        const entityName = (cell('H8') || cell('H4') || cell('I8') || '').toUpperCase();
+        // Try multiple common name cell locations (different SecInfo layouts)
+        const entityName = (cell('I8') || cell('H8') || cell('G8') || '').toUpperCase();
 
         let detectedType = 'company'; // default
-        if (/\bTRUST\b/.test(entityName)) detectedType = 'trust';
+        // Check company indicators first — they take priority over TRUST
+        // (e.g. "BOERDERY & TRUST (EDMS) BPK" is a company, not a trust)
+        if (/\(PTY\)|\bPTY\b|\(EDMS\)|\bEDMS\b|\bBPK\b|\bLTD\b|\bLIMITED\b/.test(entityName)) detectedType = 'company';
         else if (/\bCC\b|\bBK\b/.test(entityName)) detectedType = 'cc';
+        else if (/\bTRUST\b/.test(entityName)) detectedType = 'trust';
         else if (/\bNPC\b|\bNPO\b/.test(entityName)) detectedType = 'npo';
         else if (/\bINC\b|\bINCORPORATED\b/.test(entityName)) detectedType = 'attorneys';
         else if (/\bSCHOOL\b|\bSKOOL\b/.test(entityName)) detectedType = 'school';
