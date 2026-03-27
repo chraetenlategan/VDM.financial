@@ -150,6 +150,9 @@ class DocumentGenerator {
   function letterheadFooter() { return `<div class="letterhead-footer">
     <img class="letterhead-footer-img" src="${LETTERHEAD_FOOTER_IMG}" alt="VDM Footer">
   </div>`; }
+  function auditFooter() { return `<div class="letterhead-footer">
+    <img class="letterhead-footer-img" src="${AUDIT_FOOTER_IMG}" alt="VDM Audit Footer">
+  </div>`; }
 
   // Compiler block helper
   function compilerBlock(signer, date) {
@@ -208,7 +211,7 @@ class DocumentGenerator {
   // For clubs, hide the members row entirely if none were added
   const directorCoverRows = dirs.length
     ? dirs.map(d => d.idNo ? `${d.full} – ${d.idNo}` : d.full).join('<br>')
-    : (entityType === 'club' ? '' : '[DIRECTOR NAMES]');
+    : ((entityType === 'club' || entityType === 'church') ? '' : '[DIRECTOR NAMES]');
 
   // ── PAGE 0: COVER PAGE ──
   const coverPage = `
@@ -557,6 +560,7 @@ ${reviewConclusionSection}
 <p>The annual financial statements include the ${possessiveTerm} Report as required by the Companies Act of South Africa. The ${pluralTerm.toLowerCase()} ${dirSingularPlural.isAre} responsible for ${possessiveTerm} Report. Our conclusion on the financial statements does not cover the ${possessiveTerm} Report and we do not express any form of assurance conclusion thereon.</p>
 <p>In connection with our independent review of the financial statements, we have read the ${possessiveTerm} Report and, in doing so, considered whether the ${possessiveTerm} Report is materially inconsistent with the financial statements or our knowledge obtained in the independent review, or otherwise appears to be materially misstated. If, based on the work we have performed, we conclude that there is a material misstatement of the ${possessiveTerm} Report, we will report that fact. We have nothing to report in this regard.</p>
 ${compilerBlock(compilerSigner, dateSigned)}
+${letterheadFooter()}
 <div class="page-number">${pg3}</div>
   </div>`;
 
@@ -612,6 +616,7 @@ ${auditOtherSection}
 <h3>Auditor's Responsibilities for the Audit of the Financial Statements</h3>
 <p>Our objectives are to obtain reasonable assurance about whether the financial statements as a whole are free from material misstatement, whether due to fraud or error, and to issue an auditor's report that includes our opinion. Reasonable assurance is a high level of assurance, but is not a guarantee that an audit conducted in accordance with <em>'International Standards on Auditing (ISAs)'</em> will always detect a material misstatement when it exists. Misstatements can arise from fraud or error and are considered material if, individually or in the aggregate, they could reasonably be expected to influence the economic decisions of users taken on the basis of these financial statements.</p>
 ${compilerBlock(compilerSigner, dateSigned)}
+${auditFooter()}
 <div class="page-number">${pg3}</div>
   </div>`;
 
@@ -658,6 +663,7 @@ ${schoolBasisForOpinion}
 ${schoolGBResponsibilities}
 ${schoolAuditorResponsibilities}
 ${auditorBlock(schoolAuditorSigner, dateSigned)}
+${auditFooter()}
 <div class="page-number">${pg2}</div>
   </div>`;
   } else if (schoolSub === 'qualified') {
@@ -680,6 +686,7 @@ ${schoolBasisForOpinion}
 ${schoolGBResponsibilities}
 ${schoolAuditorResponsibilities}
 ${auditorBlock(schoolAuditorSigner, dateSigned)}
+${auditFooter()}
 <div class="page-number">${pg2}</div>
   </div>`;
   } else if (schoolSub === 'disclaimer') {
@@ -700,6 +707,7 @@ ${auditLetterhead()}
 ${schoolGBResponsibilities}
 ${schoolAuditorResponsibilities}
 ${auditorBlock(schoolAuditorSigner, dateSigned)}
+${auditFooter()}
 <div class="page-number">${pg2}</div>
   </div>`;
   }
@@ -815,6 +823,7 @@ ${attAuditorSection}
 ${attLPCReportSection}
 ${attRestrictionSection}
 ${attSignatureSection}
+${auditFooter()}
   </div>`;
     } else if (attOpinion === 'modified') {
       pageAttorneysAudit = `
@@ -837,6 +846,7 @@ ${attAuditorSection}
 ${attLPCReportSection}
 ${attRestrictionSection}
 ${attSignatureSection}
+${auditFooter()}
   </div>`;
     } else {
       // Disclaimer
@@ -860,6 +870,7 @@ ${attAuditorSection}
 ${attLPCReportSection}
 ${attRestrictionSection}
 ${attSignatureSection}
+${auditFooter()}
   </div>`;
     }
   }
@@ -883,6 +894,7 @@ ${auditLetterhead()}
 <div class="signature-block">
   ${sigBlock(dirs)}
 </div>
+${auditFooter()}
 <div class="page-number">${pg1}</div>
   </div>`;
 
@@ -1020,6 +1032,7 @@ ${postalHtml}
 <p>We, the undersigned, agree to the terms of this letter.</p>
 ${engSigBlock}
 <p style="margin-top:18px;">${dateSigned}</p>
+${letterheadFooter()}
   </div>`;
   }
 
@@ -1075,6 +1088,54 @@ ${engSigBlock}
   </div>`;
   }
 
+  // ── CLUB / CHURCH AUDIT ENGAGEMENT LETTER (Audit Letterhead) ──
+  function buildClubChurchAuditEngagementLetter() {
+    const bodyLabel = entityType === 'church' ? 'church council' : 'committee';
+    const entityLabel = entityType === 'church' ? 'church' : 'club';
+    return `
+  <div class="doc-page">
+${auditLetterhead()}
+<br>
+<p style="margin:0;line-height:1.6;">${engAddressee}</p>
+<p style="margin:0;line-height:1.6;font-weight:bold;">${co}</p>
+${postalHtml}
+<br>
+<p><strong>ENGAGEMENT LETTER TO AUDIT FINANCIAL STATEMENTS</strong></p>
+<p><em><strong>The objective and scope of the audit and our responsibilities</strong></em></p>
+<p>You have requested that we audit the financial statements of ${co} for the year ended ${yearEnd}, comprising the statement of financial position, the statement of profit or loss, statement of changes in funds and statement of cash flows for the year then ended, and a summary of significant accounting policies and other explanatory information. Our audit will be made with the objective of our expressing an opinion on the financial statements. We will conduct our audit in accordance with International Standards on Auditing (or refer to relevant national standards or practices). Those Standards require that we plan and perform the audit to obtain reasonable assurance about whether the financial statements are free of material misstatements. An audit includes examining, on a test basis, evidence supporting the amounts and disclosures in the financial statements. An audit also includes assessing the accounting principles used and significant estimates made by management, as well as evaluating the overall financial statement presentation. Because of the test nature and other inherent limitations of an audit, together with the inherent limitations of any accounting and internal control system, there is an unavoidable risk that even some material misstatements may remain undiscovered. In addition to our report on the financial statements, we expect to provide you with a separate letter concerning any material weaknesses in accounting and internal control systems which come to our notice.</p>
+<p><em><strong>Responsibilities of the ${bodyLabel}</strong></em></p>
+<p>It is the sole responsibility of the ${bodyLabel} to determine the appropriateness of an audit engagement in the circumstances of the ${entityLabel}, and taking cognizance of any other requirements or agreements that may be applicable to the ${entityLabel}.</p>
+<p>Our audit will be conducted on the basis that you acknowledge and understand that you have responsibility:</p>
+<ul>
+  <li>For the preparation and fair presentation of the financial statements in accordance with the International Financial Reporting Standard for Small and Medium-sized Entities (IFRS for SMEs)</li>
+  <li>For such internal control as you determine is necessary to enable the preparation of financial statements that are free from material misstatement, whether due to fraud or error; and</li>
+  <li>To provide us with access to all information of which you are aware that is relevant to the preparation of the financial statements, such as records, documentation and other matters, additional information that we may request from you for the purpose of the review, and unrestricted access to persons within the entity from whom we determine it necessary to obtain evidence.</li>
+</ul>
+<p>As part of our audit, we will request from management and, where appropriate, from those charged with governance, written confirmation concerning representations made to us in connection with the audit.</p>
+<p><em><strong>Reporting</strong></em></p>
+<p>As stated above, our audit will be conducted with the objective of expressing an audit conclusion on the financial statements as a whole. Our audit conclusion will be communicated in a written report. If the audit conclusion on the financial statements of the ${entityLabel} is unmodified, it is currently expected to read as follows:</p>
+<p>"In our opinion, the financial statements present fairly, in all material respects, the financial position as at ${yearEnd}, and its financial performance and cash flows for the year then ended in accordance with International Financial Reporting Standards for Small and Medium-sized Entities."</p>
+<p>However, the form and contents of our report may need to be amended in the light of our findings obtained from the audit.</p>
+<p><em><strong>Fees</strong></em></p>
+<p>Our fees are based on the time required by the resources assigned to the engagement. The fees billed are based on the degree of responsibility involved, as well as the level of experience, knowledge and skill required. Our fees, together with disbursements, will be billed as work progresses, and settlement is due on presentation of our invoices.</p>
+<p><em><strong>Agreement of terms</strong></em></p>
+<p>We look forward to full cooperation with your staff during our audit. We are available to discuss this letter with you at any time. Once it has been agreed to, this letter will remain effective for future years unless it is terminated, amended or superseded. The individual practitioner responsible and accountable for the audit engagement is:</p>
+<p><strong>${engPractitioner}</strong></p>
+<p>Please sign and return the attached copy of this letter, including our standard terms and conditions, to indicate that it is in accordance with your understanding of, and agreement with, the arrangements for our audit of the financial statements, including our respective responsibilities.</p>
+<p>Yours faithfully</p>
+<br>
+<p><strong>VDM AUDIT</strong></p>
+<br>
+<p>We, the undersigned, being duly authorized to sign for or on behalf of the entity, herewith accept the above terms of the engagement.</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:24px;">
+  <div><div style="border-top:1px solid #333;padding-top:6px;font-weight:bold;">CHAIRMAN</div></div>
+  <div><div style="border-top:1px solid #333;padding-top:6px;font-weight:bold;">TREASURER</div></div>
+</div>
+<p style="margin-top:18px;">${dateSigned}</p>
+${auditFooter()}
+  </div>`;
+  }
+
   // ── AUDIT ENGAGEMENT LETTER (Audit Letterhead) ──
   function buildAuditEngagementLetter() {
     return `
@@ -1123,6 +1184,7 @@ ${postalHtml}
 <p>We, the undersigned, being duly authorized to sign for or on behalf of the entity, herewith accept the above terms of the engagement.</p>
 ${engSigBlock}
 <p style="margin-top:18px;">${dateSigned}</p>
+${auditFooter()}
   </div>`;
   }
 
@@ -1224,6 +1286,7 @@ ${auditLetterhead()}
 <p>Yours faithfully</p>
 <br>
 ${engSigBlock}
+${auditFooter()}
   </div>`;
   }
 
@@ -1236,7 +1299,13 @@ ${engSigBlock}
     } else {
       if (document.getElementById('engTypeAccounting').checked) engagementLetterPages += buildAccountingEngagementLetter();
       if (document.getElementById('engTypeReview').checked) engagementLetterPages += buildReviewEngagementLetter();
-      if (document.getElementById('engTypeAudit').checked) engagementLetterPages += buildAuditEngagementLetter();
+      if (document.getElementById('engTypeAudit').checked) {
+        if (entityType === 'club' || entityType === 'church') {
+          engagementLetterPages += buildClubChurchAuditEngagementLetter();
+        } else {
+          engagementLetterPages += buildAuditEngagementLetter();
+        }
+      }
     }
   }
 
@@ -1638,6 +1707,7 @@ ${auditLetterhead()}
   ${sigBlock(dirs)}
 </div>
 <p>${agmDate}</p>
+${auditFooter()}
   </div>`;
     }
 

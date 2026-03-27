@@ -107,6 +107,13 @@ function onBcEventsChange()            { entityManager.onBcEventsChange(); }
 function onBcMgmtRulesChange()         { entityManager.onBcMgmtRulesChange(); }
 function onTrustDeedChange()           { entityManager.onTrustDeedChange(); }
 
+// Church Step 7 toggle
+function toggleChurchStep7() {
+  const hide = document.querySelector('input[name="churchPolicies"]:checked')?.value === 'no';
+  document.getElementById('step7-block').style.display = hide ? 'none' : '';
+  document.getElementById('step7-divider').style.display = hide ? 'none' : '';
+}
+
 // EntityManager — accounting policies
 function selectAllPolicies(checked)    { entityManager.selectAllPolicies(checked); }
 function togglePolicy(id)              { entityManager.togglePolicy(id); }

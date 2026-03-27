@@ -3,8 +3,9 @@
 
 // ── Letterhead images (base64) ──
 const CA_LETTERHEAD = "images/letterhead-header.webp";
-const AUDIT_LETTERHEAD = "images/letterhead-header.webp";
+const AUDIT_LETTERHEAD = "images/Audit-letterhead-header.webp";
 const LETTERHEAD_FOOTER_IMG = "images/letterhead-footer.png";
+const AUDIT_FOOTER_IMG = "images/Audit-letterhead-footer.webp";
 
 
 // ── ACCOUNTING POLICIES ──

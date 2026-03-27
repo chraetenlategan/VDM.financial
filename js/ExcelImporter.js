@@ -45,7 +45,7 @@ class ExcelImporter {
 
         // ── Detect entity type from the entity name ──
         // Try multiple common name cell locations
-        const entityName = (cell('H4') || cell('I8') || '').toUpperCase();
+        const entityName = (cell('H8') || cell('H4') || cell('I8') || '').toUpperCase();
 
         let detectedType = 'company'; // default
         if (/\bTRUST\b/.test(entityName)) detectedType = 'trust';

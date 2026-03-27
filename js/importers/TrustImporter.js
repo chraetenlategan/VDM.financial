@@ -9,16 +9,16 @@ class TrustImporter {
    * @param {Object}   em      - EntityManager instance
    */
   static extract(cell, fmtAddr, setField, em) {
-    // ── Entity name (row 4, col H = column 8) ──
-    const entityName = cell('H4') || '';
+    // ── Entity name (row 8, col H) ──
+    const entityName = cell('H8') || '';
     setField('companyName', entityName);
 
-    // ── Registration / Trust number (row 9, col AA = column 27) ──
-    const regNo = cell('AA9') || '';
+    // ── Registration / Trust number (row 13, col AA) ──
+    const regNo = cell('AA13') || '';
     setField('regNumber', regNo);
 
-    // ── Year end (row 25, col AA) ──
-    const yearEndStr = cell('AA25') || '';
+    // ── Year end (row 26, col AA — may be Excel date serial or formatted string) ──
+    const yearEndStr = cell('AA26') || '';
     setField('yearEnd', yearEndStr);
     if (yearEndStr) {
       const m = yearEndStr.match(/(\d{1,2})\s+(\w+)\s+(\d{4})/);
@@ -26,15 +26,18 @@ class TrustImporter {
     }
 
     // ── Addresses ──
-    // Postal address (row 20, col C–E area)
-    setField('postalAddress', fmtAddr(cell('C20')));
-    // Registered office (row 20, col H–J area)
-    setField('regAddress', fmtAddr(cell('H20')));
-    // Business address (row 20, col W–Y area)
-    setField('businessAddress', fmtAddr(cell('W20')));
+    // Postal address (row 21, col C area — row 20 is headers)
+    const postalAddr = fmtAddr(cell('C21'));
+    setField('postalAddress', postalAddr);
+    // Registered office / business address (row 21, col H area)
+    const regAddr = fmtAddr(cell('H21'));
+    setField('regAddress', regAddr);
+    // Business address (row 21, col W area)
+    const busAddr = fmtAddr(cell('W21'));
+    setField('businessAddress', busAddr);
 
-    // ── Partner → VDM Signatory ──
-    const partnerRaw = cell('AA6') || '';
+    // ── Partner → VDM Signatory (row 10, col AA) ──
+    const partnerRaw = cell('AA10') || '';
     TrustImporter._mapSigner(partnerRaw, setField);
 
     // ── Select entity type ──
@@ -47,9 +50,8 @@ class TrustImporter {
     em.directors = [];
     em.directorCount = 0;
 
-    // Trustees section: header row has "TRUSTEES" in col D (column 4)
+    // Trustees section: header row has "TRUSTEES" in col D
     // Data rows follow with: Name(D), Representative(G), ID/Reg(L), Appointed(Q)
-    // Find the TRUSTEES header row first
     let trusteeHeaderRow = 0;
     for (let r = 40; r <= 70; r++) {
       const val = cell('D' + r);
@@ -88,8 +90,9 @@ class TrustImporter {
     if (entityName) imported.push('trust name');
     if (regNo) imported.push('trust number');
     if (yearEndStr) imported.push('year end');
-    if (cell('C20')) imported.push('postal address');
-    if (cell('H20')) imported.push('registered address');
+    if (postalAddr) imported.push('postal address');
+    if (regAddr) imported.push('registered address');
+    if (busAddr) imported.push('business address');
     if (trusteesImported > 0) imported.push(trusteesImported + ' trustee(s)');
     return imported;
   }

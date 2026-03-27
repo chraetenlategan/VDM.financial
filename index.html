@@ -976,11 +976,11 @@
           <label>Include accounting policies in the document?</label>
           <div class="options-group">
             <label class="option-pill">
-              <input type="radio" name="churchPolicies" value="yes" checked onchange="liveUpdate()"> Yes — include
+              <input type="radio" name="churchPolicies" value="yes" checked onchange="toggleChurchStep7(); liveUpdate()"> Yes — include
               policies
             </label>
             <label class="option-pill">
-              <input type="radio" name="churchPolicies" value="no" onchange="liveUpdate()"> No — skip policies
+              <input type="radio" name="churchPolicies" value="no" onchange="toggleChurchStep7(); liveUpdate()"> No — skip policies
             </label>
           </div>
           <p class="hint">If included, select the applicable policies below in Step 7.</p>

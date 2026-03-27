@@ -217,9 +217,10 @@ class EntityManager {
     document.getElementById('step6-block').style.display = hideStep6 ? 'none' : '';
     document.getElementById('step6-divider').style.display = hideStep6 ? 'none' : '';
 
-    // Hide Step 7 (Accounting Policies) for Attorneys
-    document.getElementById('step7-block').style.display = (type === 'attorneys') ? 'none' : '';
-    document.getElementById('step7-divider').style.display = (type === 'attorneys') ? 'none' : '';
+    // Hide Step 7 (Accounting Policies) for Attorneys, or for Church when policies=no
+    const hideStep7 = (type === 'attorneys') || (type === 'church' && document.querySelector('input[name="churchPolicies"]:checked')?.value === 'no');
+    document.getElementById('step7-block').style.display = hideStep7 ? 'none' : '';
+    document.getElementById('step7-divider').style.display = hideStep7 ? 'none' : '';
 
     // Show BC-specific Step 6 only for Body Corporate
     const isBc = (type === 'bc');

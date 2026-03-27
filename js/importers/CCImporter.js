@@ -3,13 +3,13 @@
 
 class CCImporter {
   static extract(cell, fmtAddr, setField, em) {
-    const entityName = cell('I8') || '';
+    const entityName = cell('H8') || '';
     setField('companyName', entityName);
 
-    const regNo = cell('AB12') || '';
+    const regNo = cell('AA13') || '';
     setField('regNumber', regNo);
 
-    const yearEndStr = cell('AB25') || '';
+    const yearEndStr = cell('AA26') || '';
     setField('yearEnd', yearEndStr);
     if (yearEndStr) {
       const m = yearEndStr.match(/(\d{1,2})\s+(\w+)\s+(\d{4})/);
@@ -21,11 +21,11 @@ class CCImporter {
       setField('natureBusiness', mainObj.toLowerCase());
     }
 
-    setField('postalAddress', fmtAddr(cell('E20')));
-    setField('regAddress', fmtAddr(cell('I20')));
-    setField('businessAddress', fmtAddr(cell('X20')));
+    setField('postalAddress', fmtAddr(cell('C21')));
+    setField('regAddress', fmtAddr(cell('H21')));
+    setField('businessAddress', fmtAddr(cell('W21')));
 
-    CCImporter._mapSigner(cell('AB9'), setField);
+    CCImporter._mapSigner(cell('AA10'), setField);
 
     const ecCard = document.getElementById('ec-cc');
     if (ecCard) em.selectEntity(ecCard, 'cc');
@@ -35,31 +35,43 @@ class CCImporter {
     em.directors = [];
     em.directorCount = 0;
 
-    // Members section — same layout as company directors
-    let memberRow = 58;
-    while (memberRow < 100) {
-      const name = cell('F' + memberRow);
-      if (!name) break;
-      const parts = name.replace(/^(MR|MRS|MS|MISS|DR|PROF|ADV|ME|MNR)\s+/i, '').trim().split(/\s+/);
-      const surname = parts.pop() || '';
-      const initials = parts.map(p => p.charAt(0).toUpperCase()).join('');
-      const idNo = cell('S' + memberRow);
+    let headerRow = 0;
+    for (let r = 40; r <= 70; r++) {
+      const val = cell('D' + r);
+      if (val && /^MEMBERS$/i.test(val.trim())) {
+        headerRow = r;
+        break;
+      }
+    }
 
-      em.addDirector();
-      const idx = em.directorCount;
-      setField(`dir-init-${idx}`, initials);
-      setField(`dir-sur-${idx}`, surname);
-      setField(`dir-id-${idx}`, idNo);
-      memberRow++;
+    let membersImported = 0;
+    if (headerRow) {
+      let dataRow = headerRow + 2;
+      while (dataRow < headerRow + 20) {
+        const name = cell('D' + dataRow);
+        if (!name) break;
+        const parts = name.replace(/^(MR|MRS|MS|MISS|DR|PROF|ADV|ME|MNR)\s+/i, '').trim().split(/\s+/);
+        const surname = parts.pop() || '';
+        const initials = parts.map(p => p.charAt(0).toUpperCase()).join('');
+        const idNo = cell('L' + dataRow) || '';
+
+        em.addDirector();
+        const idx = em.directorCount;
+        setField(`dir-init-${idx}`, initials);
+        setField(`dir-sur-${idx}`, surname);
+        setField(`dir-id-${idx}`, idNo);
+        membersImported++;
+        dataRow++;
+      }
     }
 
     const imported = [];
     if (entityName) imported.push('CC name');
     if (regNo) imported.push('CK number');
     if (yearEndStr) imported.push('year end');
-    if (cell('E20')) imported.push('postal address');
-    if (cell('I20')) imported.push('registered address');
-    if (memberRow > 58) imported.push((memberRow - 58) + ' member(s)');
+    if (fmtAddr(cell('C21'))) imported.push('postal address');
+    if (fmtAddr(cell('H21'))) imported.push('registered address');
+    if (membersImported > 0) imported.push(membersImported + ' member(s)');
     return imported;
   }
 
