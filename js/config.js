@@ -2,10 +2,10 @@
 // Depends on: (none)
 
 // ── Letterhead images (base64) ──
-const CA_LETTERHEAD = "images/letterhead-header.webp";
-const AUDIT_LETTERHEAD = "images/Audit-letterhead-header.webp";
+const CA_LETTERHEAD = "images/letterhead-header.png";
+const AUDIT_LETTERHEAD = "images/Audit-letterhead-header.png";
 const LETTERHEAD_FOOTER_IMG = "images/letterhead-footer.png";
-const AUDIT_FOOTER_IMG = "images/Audit-letterhead-footer.webp";
+const AUDIT_FOOTER_IMG = "images/Audit-letterhead-footer.png";
 
 
 // ── ACCOUNTING POLICIES ──
@@ -28,6 +28,7 @@ const accountingPolicies = [
       { id: 'pol_ppe_furniture', label: 'Furniture and Fittings', rateOptions: ['50% / 30% / 20%', '20%', '33%', '10%', 'Other'] },
       { id: 'pol_ppe_office', label: 'Office Equipment', rateOptions: ['50% / 30% / 20%', '20%', '33%', '10%', 'Other'] },
       { id: 'pol_ppe_computer', label: 'Computer Equipment', rateOptions: ['50% / 30% / 20%', '20%', '33%', '10%', 'Other'] },
+      { id: 'pol_ppe_land', label: 'Land and Buildings', isLandAndBuildings: true },
     ],
     textSuffix: 'Land and buildings are valuated from time to time to ensure that the net realisable value of these assets still exceeds the original cost of the property. Should the realisable value be less than the original cost the assets will be revalued to the realisable value.'
   },

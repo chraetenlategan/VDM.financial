@@ -402,6 +402,15 @@ class EntityManager {
         // PPE-style: checkbox + label + rate dropdown + optional custom input
         subHtml = `<div class="policy-subitems">` +
           p.subItems.map(s => {
+            if (s.isLandAndBuildings) {
+              return `
+          <div class="policy-subitem-row" id="row-${s.id}">
+            <label class="policy-subitem-check">
+              <input type="checkbox" id="${s.id}" onchange="liveUpdate()">
+              <span>${s.label}</span>
+            </label>
+          </div>`;
+            }
             const opts = s.rateOptions.map(r =>
               `<option value="${r}">${r}</option>`
             ).join('');
@@ -478,8 +487,10 @@ class EntityManager {
           const scb = document.getElementById(s.id);
           if (scb) {
             scb.checked = checked;
-            const rw = document.getElementById('rate-wrap-' + s.id);
-            if (rw) rw.style.display = checked ? 'flex' : 'none';
+            if (!s.isLandAndBuildings) {
+              const rw = document.getElementById('rate-wrap-' + s.id);
+              if (rw) rw.style.display = checked ? 'flex' : 'none';
+            }
           }
         });
       }

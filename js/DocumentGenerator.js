@@ -82,7 +82,7 @@ class DocumentGenerator {
   const hasReg = entityType === 'attorneys' ? getRadio('attHasReg') === 'yes'
                : entityType === 'club' ? !!getVal('regNumber')
                : true;
-  const reg = hasReg ? (getVal('regNumber') || '[REGISTRATION NUMBER]') : '';
+  const reg = hasReg ? (getVal('regNumber') || '') : '';
   const regLine = reg ? `<div class="co-reg">(Registration Number ${reg})</div>` : '';
   const regLineItalic = reg ? `<p><em>(Registration Number ${reg})</em></p>` : '';
 
@@ -302,7 +302,6 @@ ${letterheadFooter()}
   const page2 = `
   <div class="doc-page">
 <div class="page-header">
-  <div class="co-name">${coUpper}</div>
   ${regLine}
 </div>
 <h2>${possessiveTerm} Responsibilities and Approval</h2>
@@ -368,7 +367,6 @@ ${letterheadFooter()}
   const page4 = `
   <div class="doc-page">
 <div class="page-header">
-  <div class="co-name">${coUpper}</div>
   ${regLine}
 </div>
 <h2>${possessiveTerm} Report</h2>
@@ -429,7 +427,6 @@ ${parentSentence ? `<p>${parentSentence}</p>` : ''}
   function notesPageHeader(isContinued) {
     return `
 <div class="page-header">
-  <div class="co-name">${coUpper}</div>
   ${regLine}
 </div>
 <h2>NOTES FOR THE YEAR ENDED ${yearEnd.toUpperCase()}${isContinued ? ' — CONTINUED' : ''}</h2>`;
@@ -440,7 +437,7 @@ ${parentSentence ? `<p>${parentSentence}</p>` : ''}
     if (p.id === 'pol_ppe' && p.subItems) {
       const checkedSubs = p.subItems.filter(s => {
         const cb = document.getElementById(s.id);
-        return cb && cb.checked;
+        return cb && cb.checked && !s.isLandAndBuildings;
       });
       let rateLines = '';
       if (checkedSubs.length > 0) {
@@ -454,7 +451,10 @@ ${parentSentence ? `<p>${parentSentence}</p>` : ''}
       } else {
         rateLines = '<br>';
       }
-      return (p.text || '') + rateLines + (p.textSuffix || '');
+      // Only show Land and Buildings text if that checkbox is ticked
+      const landCb = document.getElementById('pol_ppe_land');
+      const landText = (landCb && landCb.checked) ? (p.textSuffix || '') : '';
+      return (p.text || '') + rateLines + landText;
     }
     if (p.id === 'pol_biological' && p.subItems) {
       const checkedBio = p.subItems.filter(s => {
@@ -652,7 +652,7 @@ ${auditFooter()}
     pageSchoolAudit = `
   <div class="doc-page">
 ${auditLetterhead()}
-<div class="page-header"><div class="co-name">${coUpper}</div></div>
+<div class="page-header"></div>
 <h2>Independent Auditor's Report</h2>
 <p><em>To the Governing Body of ${co}</em></p>
 <h3>Opinion</h3>
@@ -673,7 +673,7 @@ ${auditFooter()}
     pageSchoolAudit = `
   <div class="doc-page">
 ${auditLetterhead()}
-<div class="page-header"><div class="co-name">${coUpper}</div></div>
+<div class="page-header"></div>
 <h2>Independent Auditor's Report</h2>
 <p><em>To the Governing Body of ${co}</em></p>
 <h3>Qualified Opinion</h3>
@@ -694,7 +694,7 @@ ${auditFooter()}
     pageSchoolAudit = `
   <div class="doc-page">
 ${auditLetterhead()}
-<div class="page-header"><div class="co-name">${coUpper}</div></div>
+<div class="page-header"></div>
 <h2>Independent Auditor's Report</h2>
 <p><em>To the Governing Body of ${co}</em></p>
 <h3>Disclaimer of Opinion</h3>
@@ -880,8 +880,7 @@ ${auditFooter()}
   <div class="doc-page">
 ${auditLetterhead()}
 <div class="page-header">
-  <div class="co-name">${coUpper}</div>
-  <div class="co-reg">(Sectional Title Scheme Number — ${reg})</div>
+  ${reg ? `<div class="co-reg">(Sectional Title Scheme Number — ${reg})</div>` : ''}
 </div>
 <h2>Trustees' Responsibilities and Approval</h2>
 <p>The trustees are required in terms of the <em>Sectional Titles Schemes Management Act, 2011</em>, <em>the Sectional Titles Schemes Management Regulations, 2016 and the Management Rules of the body corporate</em> established in terms thereof, to maintain adequate accounting records and are responsible for the content and integrity of the financial statements and related financial information included in this report. It is their responsibility to ensure that the financial statements fairly present the state of affairs of the entity as at the end of the financial year and the results of its operations and cash flows for the period then ended, in conformity with International Financial Reporting Standards for Small and Medium-sized Entities and the requirements of the <em>Sectional Titles Schemes Management Act, 2011</em>, <em>the Sectional Titles Schemes Management Regulations, 2016 and the Management Rules of the body corporate</em> established in terms thereof.</p>
@@ -930,8 +929,7 @@ ${auditFooter()}
   const pageTrusteesReport = `
   <div class="doc-page">
 <div class="page-header">
-  <div class="co-name">${coUpper}</div>
-  <div class="co-reg">(Sectional Title Scheme Number — ${reg})</div>
+  ${reg ? `<div class="co-reg">(Sectional Title Scheme Number — ${reg})</div>` : ''}
 </div>
 <h2>Trustees' Report</h2>
 <p>The trustees have pleasure in presenting their report for the year ended ${yearEnd}.</p>
@@ -1355,8 +1353,7 @@ ${auditFooter()}
     pageTrustMinutes = `
   <div class="doc-page">
 <div class="page-header">
-  <div class="co-name">${coUpper}</div>
-  <div class="co-reg">(${reg})</div>
+  ${reg ? `<div class="co-reg">(${reg})</div>` : ''}
 </div>
 <h2>Minutes of the Annual General Meeting of Trustees</h2>
 <p style="text-align:center;font-style:italic;">held at ${agmVenue} on ${agmDate}.</p>
@@ -1400,10 +1397,9 @@ ${deedPara}
     ccMinutesPages = `
   <div class="doc-page">
 <div class="page-header">
-  <div class="co-name">${coUpper}</div>
   ${regLine}
 </div>
-<h2 style="text-align:center;letter-spacing:0.06em;">MINUTES OF THE ANNUAL GENERAL MEETING OF MEMBERS OF THE ENTITY<br>HELD AT ${ccVenue} ON ${ccDate}.</h2>
+<h2 style="letter-spacing:0.06em;">MINUTES OF THE ANNUAL GENERAL MEETING OF MEMBERS OF THE ENTITY<br>HELD AT ${ccVenue} ON ${ccDate}.</h2>
 <br>
 <p style="margin-bottom:12px;"><strong>PRESENT:</strong>&nbsp;&nbsp;&nbsp;&nbsp;${dirs.map(d => d.full).join(', ') || '[MEMBER NAMES]'}</p>
 <p class="underline-heading">QUORUM AND NOTICE</p>
@@ -1434,10 +1430,9 @@ ${auditSentenceCC}
     const pageDirMinutes = `
   <div class="doc-page">
 <div class="page-header">
-  <div class="co-name">${coUpper}</div>
   ${regLine}
 </div>
-<h2 style="text-align:center;letter-spacing:0.06em;">MINUTES OF THE ANNUAL GENERAL MEETING OF DIRECTORS OF THE COMPANY<br>HELD AT ${mVenue} ON ${mDate}.</h2>
+<h2 style="letter-spacing:0.06em;">MINUTES OF THE ANNUAL GENERAL MEETING OF DIRECTORS OF THE COMPANY<br>HELD AT ${mVenue} ON ${mDate}.</h2>
 <br>
 <p style="margin-bottom:12px;"><strong>PRESENT:</strong>&nbsp;&nbsp;&nbsp;&nbsp;${dirs.map(d => `<span style="display:inline-block;margin-right:48px;">${d.full}</span>`).join('')}</p>
 <p style="font-style:italic;font-size:9pt;color:#888;margin:-4px 0 16px;">(Directors present should cross out their own name above to confirm attendance.)</p>
@@ -1482,10 +1477,9 @@ ${auditSentenceCC}
     const pageShAGM = `
   <div class="doc-page">
 <div class="page-header">
-  <div class="co-name">${coUpper}</div>
   ${regLine}
 </div>
-<h2 style="text-align:center;letter-spacing:0.06em;">MINUTES OF THE ANNUAL GENERAL MEETING OF SHAREHOLDERS OF THE COMPANY<br>HELD AT ${mVenue} ON ${mDate}.</h2>
+<h2 style="letter-spacing:0.06em;">MINUTES OF THE ANNUAL GENERAL MEETING OF SHAREHOLDERS OF THE COMPANY<br>HELD AT ${mVenue} ON ${mDate}.</h2>
 <br>
 <p style="margin-bottom:12px;"><strong>PRESENT:</strong>&nbsp;&nbsp;&nbsp;&nbsp;${shPresentList}</p>
 <p class="underline-heading">Quorum and Notice</p>
@@ -1537,7 +1531,7 @@ ${shSigBlock()}
 <p>Dear Sir</p>
 <br>
 <p><strong>${coUpper}</strong></p>
-<p><strong>(Registration Number ${reg})</strong></p>
+${reg ? `<p><strong>(Registration Number ${reg})</strong></p>` : ''}
 <br>
 <p>In connection with your examination of the financial statements for the year ended on <strong>${yearEnd ? yearEnd.toUpperCase() : '[YEAR END]'}</strong> we confirm to the best of our knowledge and belief that:</p>
 <ol style="font-size:9.5pt;line-height:1.65;padding-left:22px;margin-top:10px;">
@@ -1679,10 +1673,9 @@ ${lcSigned}
   <div class="doc-page">
 ${auditLetterhead()}
 <div class="page-header">
-  <div class="co-name">${coUpper}</div>
-  <div class="co-reg">(Sectional Title Scheme Number — ${reg})</div>
+  ${reg ? `<div class="co-reg">(Sectional Title Scheme Number — ${reg})</div>` : ''}
 </div>
-<h2 style="text-align:center;margin-top:8px;">Minutes of the Annual General Meeting of Trustees of the Body Corporate</h2>
+<h2 style="margin-top:8px;">Minutes of the Annual General Meeting of Trustees of the Body Corporate</h2>
 <p style="text-align:center;font-style:italic;">held at ${agmVenue} on ${agmDate}.</p>
 <br>
 <p class="underline-heading">Present</p>
