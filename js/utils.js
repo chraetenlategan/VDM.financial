@@ -47,3 +47,42 @@ function formatIdNumber(el) {
 function toTitleCase(str) {
   return str.toLowerCase().replace(/(?:^|\s)\S/g, c => c.toUpperCase());
 }
+
+// ── Shared importer helpers ──
+
+// Map VDM partner name to signer value
+const SIGNER_MAP = {
+  'LEON VAN DER MERWE': 'L VAN DER MERWE',
+  'L VAN DER MERWE': 'L VAN DER MERWE',
+  'HENDRIK LEON VAN DER MERWE': 'HL VAN DER MERWE',
+  'HL VAN DER MERWE': 'HL VAN DER MERWE',
+  'REINETTE DE BEER': 'R DE BEER',
+  'R DE BEER': 'R DE BEER',
+  'RIEKIE WOLMARANS': 'R WOLMARANS',
+  'R WOLMARANS': 'R WOLMARANS',
+};
+
+function mapSigner(partnerRaw) {
+  if (!partnerRaw) return null;
+  const pName = partnerRaw.replace(/\s*\[.*\]/, '').trim().toUpperCase();
+  return SIGNER_MAP[pName] || null;
+}
+
+// Parse "MR LEON VAN DER MERWE" → { initials, surname }
+function parseName(raw) {
+  const cleaned = raw
+    .replace(/\s*\(Appointed.*?\)/i, '')
+    .replace(/^(MR|MRS|MS|MISS|DR|PROF|ADV|ME|MNR)\s+/i, '')
+    .trim();
+  const parts = cleaned.split(/\s+/);
+  const surname = parts.pop() || '';
+  const initials = parts.map(p => p.charAt(0).toUpperCase()).join('');
+  return { initials, surname };
+}
+
+// "28 February 2024" → "28 February 2023"
+function calcPrevYearEnd(yearEndStr) {
+  if (!yearEndStr) return '';
+  const m = yearEndStr.match(/(\d{1,2})\s+(\w+)\s+(\d{4})/);
+  return m ? `${m[1]} ${m[2]} ${parseInt(m[3]) - 1}` : '';
+}

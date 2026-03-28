@@ -165,6 +165,97 @@ const accountingPolicies = [
   }
 ];
 
+// ── IMPORTER CELL CONFIGS ──
+// Three SecInfo export layouts mapped by entity type.
+// Layout A = Trust, Layout B = Company/Club/NPO/etc, Layout C = CC
+
+const IMPORTER_LAYOUT_B = {
+  entityNameCell: 'I8', regNoCell: 'AB12', yearEndCell: 'AB25',
+  partnerCell: 'AB9', natureCell: 'E26',
+  postalCell: 'E20', regAddrCell: 'I20', businessCell: 'X20',
+  headerCol: 'F', nameCol: 'F', idCol: 'S',
+  headerSearchStart: 40, headerSearchEnd: 70,
+};
+
+const IMPORTER_LAYOUT_C = {
+  entityNameCell: 'G8', regNoCell: 'R12', yearEndCell: 'R25',
+  partnerCell: 'R9', natureCell: 'D26',
+  postalCell: 'D20', regAddrCell: 'G20', businessCell: 'O20',
+  headerCol: 'B', nameCol: 'B', idCol: 'K',
+  headerSearchStart: 35, headerSearchEnd: 55,
+};
+
+const IMPORTER_CONFIGS = {
+  trust: {
+    layout: {
+      entityNameCell: 'H8', regNoCell: 'AA13', yearEndCell: 'AA26',
+      partnerCell: 'AA10', natureCell: null,
+      postalCell: 'C21', regAddrCell: 'H21', businessCell: 'W21',
+      headerCol: 'D', nameCol: 'D', idCol: 'L',
+      headerSearchStart: 40, headerSearchEnd: 70,
+    },
+    ecId: 'ec-trust',
+    headerPattern: /^TRUSTEES$/i,
+    stopPattern: /^BENEFICIARIES$/i,
+    labels: { name: 'trust name', reg: 'trust number', people: 'trustee(s)' },
+  },
+  company: {
+    layout: IMPORTER_LAYOUT_B,
+    ecId: 'ec-company',
+    headerPattern: /^DIRECTORS$/i,
+    stopPattern: /^SHAREHOLDERS$/i,
+    importNature: true,
+    importShareholders: true,
+    labels: { name: 'company name', reg: 'reg number', people: 'director(s)' },
+  },
+  cc: {
+    layout: IMPORTER_LAYOUT_C,
+    ecId: 'ec-cc',
+    headerPattern: /^MEMBERS$/i,
+    importNature: true,
+    labels: { name: 'CC name', reg: 'CK number', people: 'member(s)' },
+  },
+  npo: {
+    layout: IMPORTER_LAYOUT_B,
+    ecId: 'ec-npo',
+    headerPattern: /^DIRECTORS$/i,
+    importNature: true,
+    labels: { name: 'organisation name', reg: 'NPO number', people: 'director(s)' },
+  },
+  attorneys: {
+    layout: IMPORTER_LAYOUT_B,
+    ecId: 'ec-attorneys',
+    headerPattern: /^(DIRECTORS|PARTNERS)$/i,
+    labels: { name: 'firm name', reg: 'reg number', people: 'director(s)/partner(s)' },
+  },
+  school: {
+    layout: IMPORTER_LAYOUT_B,
+    ecId: 'ec-school',
+    headerPattern: /^(SGB|GOVERNING\s*BODY|DIRECTORS)$/i,
+    labels: { name: 'school name', reg: 'EMIS number', people: 'SGB member(s)' },
+  },
+  church: {
+    layout: IMPORTER_LAYOUT_B,
+    ecId: 'ec-church',
+    headerPattern: /^(COUNCIL\s*MEMBERS?|DIRECTORS|TRUSTEES|KERKRAAD)$/i,
+    regOptional: true,
+    labels: { name: 'church name', reg: 'reg number', people: 'council member(s)' },
+  },
+  club: {
+    layout: IMPORTER_LAYOUT_B,
+    ecId: 'ec-club',
+    headerPattern: /^(COMMITTEE\s*MEMBERS?|DIRECTORS|TRUSTEES)$/i,
+    regOptional: true,
+    labels: { name: 'club name', reg: 'reg number', people: 'committee member(s)' },
+  },
+  bc: {
+    layout: IMPORTER_LAYOUT_B,
+    ecId: 'ec-bc',
+    headerPattern: /^TRUSTEES$/i,
+    labels: { name: 'body corporate name', reg: 'scheme number', people: 'trustee(s)' },
+  },
+};
+
 // ── ENTITY CONFIG ──
 const ENTITY_CONFIG = {
   attorneys: {

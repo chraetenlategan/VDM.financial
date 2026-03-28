@@ -1,12 +1,11 @@
-// ExcelImporter.js — Dispatcher that detects entity type and delegates to entity-specific importers
-// Depends on: utils.js (toTitleCase), EntityManager, and js/importers/*.js
+// ExcelImporter.js — Dispatcher that detects entity type and delegates to BaseImporter
+// Depends on: utils.js, config.js (IMPORTER_CONFIGS), BaseImporter.js
 
 class ExcelImporter {
   constructor(entityManager) {
     this.em = entityManager;
   }
 
-  // Internal helper: set an input value by element ID
   setField(id, val) {
     const el = document.getElementById(id);
     if (el && val) el.value = val;
@@ -26,7 +25,6 @@ class ExcelImporter {
         const wb = XLSX.read(e.target.result, { type: 'array', cellDates: true });
         const ws = wb.Sheets[wb.SheetNames[0]];
 
-        // Helper: read a cell value as string
         function cell(ref) {
           const c = ws[ref];
           if (!c) return '';
@@ -37,19 +35,15 @@ class ExcelImporter {
           return (c.v != null ? String(c.v) : '').trim();
         }
 
-        // Helper: format multiline address to single line
         function fmtAddr(raw) {
           if (!raw) return '';
           return raw.replace(/\\n/g, '\n').split('\n').map(s => s.trim()).filter(Boolean).join(', ');
         }
 
-        // ── Detect entity type from the entity name ──
-        // Try multiple common name cell locations (different SecInfo layouts)
+        // Detect entity type from name (try all layout positions)
         const entityName = (cell('I8') || cell('H8') || cell('G8') || '').toUpperCase();
 
-        let detectedType = 'company'; // default
-        // Check company indicators first — they take priority over TRUST
-        // (e.g. "BOERDERY & TRUST (EDMS) BPK" is a company, not a trust)
+        let detectedType = 'company';
         if (/\(PTY\)|\bPTY\b|\(EDMS\)|\bEDMS\b|\bBPK\b|\bLTD\b|\bLIMITED\b/.test(entityName)) detectedType = 'company';
         else if (/\bCC\b|\bBK\b/.test(entityName)) detectedType = 'cc';
         else if (/\bTRUST\b/.test(entityName)) detectedType = 'trust';
@@ -60,32 +54,8 @@ class ExcelImporter {
         else if (/\bCHURCH\b|\bKERK\b|\bGEMEENTE\b/.test(entityName)) detectedType = 'church';
         else if (/\bCLUB\b/.test(entityName)) detectedType = 'club';
 
-        // ── Delegate to entity-specific importer ──
-        const setField = this.setField.bind(this);
-        const em = this.em;
-        let imported = [];
+        const imported = BaseImporter.extract(detectedType, cell, fmtAddr, this.setField.bind(this), this.em);
 
-        const importerMap = {
-          'trust':     typeof TrustImporter !== 'undefined'          ? TrustImporter : null,
-          'company':   typeof CompanyImporter !== 'undefined'        ? CompanyImporter : null,
-          'cc':        typeof CCImporter !== 'undefined'             ? CCImporter : null,
-          'npo':       typeof NPOImporter !== 'undefined'            ? NPOImporter : null,
-          'attorneys': typeof AttorneysImporter !== 'undefined'      ? AttorneysImporter : null,
-          'school':    typeof SchoolImporter !== 'undefined'         ? SchoolImporter : null,
-          'church':    typeof ChurchImporter !== 'undefined'         ? ChurchImporter : null,
-          'club':      typeof ClubImporter !== 'undefined'           ? ClubImporter : null,
-          'bc':        typeof BodyCorporateImporter !== 'undefined'  ? BodyCorporateImporter : null,
-        };
-
-        const Importer = importerMap[detectedType];
-        if (Importer) {
-          imported = Importer.extract(cell, fmtAddr, setField, em);
-        } else {
-          // Fallback: use CompanyImporter as default
-          imported = CompanyImporter.extract(cell, fmtAddr, setField, em);
-        }
-
-        // ── Success ──
         status.style.color = 'var(--success)';
         status.textContent = `Imported (${detectedType}): ${imported.join(', ')}.`;
 
@@ -97,7 +67,6 @@ class ExcelImporter {
       }
     };
     reader.readAsArrayBuffer(file);
-    // Reset so the same file can be re-imported
     input.value = '';
   }
 }
